@@ -1,9 +1,14 @@
 import Test from "./Test";
+import { Canvas } from "@react-three/fiber";
 
 function App() {
   return (
-    <div>
-      <Test />
+    <div
+      style={{ width: "100vw", height: "100vh", overflow: "hidden", margin: 0 }}
+    >
+      <Canvas style={{ background: "black" }}>
+        <Test />
+      </Canvas>
     </div>
   );
 }

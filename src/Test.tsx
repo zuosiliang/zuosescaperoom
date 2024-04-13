@@ -1,16 +1,27 @@
-import { Canvas } from "@react-three/fiber";
 import { useControls } from "leva";
-import { useCursor, useGLTF, OrbitControls } from "@react-three/drei";
-import { useState, useRef } from "react";
+import {
+  useCursor,
+  useGLTF,
+  OrbitControls,
+  PerspectiveCamera,
+} from "@react-three/drei";
+import { useState, useRef, useMemo } from "react";
 import {
   Outline,
   EffectComposer,
   Selection,
   Select,
 } from "@react-three/postprocessing";
+import { useThree, useFrame } from "@react-three/fiber";
+
 import * as THREE from "three";
 
 export type Model = "BOOKSHELF" | "CABINET" | "CHAIR" | "COUCH" | "DOOR";
+
+type ScreenPosition = {
+  x: number | null;
+  y: number | null;
+};
 
 const MODELS: Record<Model, Model> = {
   BOOKSHELF: "BOOKSHELF",
@@ -22,29 +33,65 @@ const MODELS: Record<Model, Model> = {
 
 export type HoverStates = Record<Model, boolean>;
 
-const initialHoverStates: HoverStates = {
-  BOOKSHELF: false,
-  CABINET: false,
-  CHAIR: false,
-  COUCH: false,
-  DOOR: false,
+const defineCustomName = (obj, customName: Model) => {
+  const rootNode = obj.scene;
+  const traverse = (node) => {
+    if (node.children.length) {
+      node.children.forEach((item) => {
+        traverse(item);
+      });
+    }
+
+    node.userData.customName = customName;
+  };
+  traverse(rootNode);
+  return obj;
 };
 
 function Test() {
-  const bookshelf = useGLTF("./shelf.glb");
-  const cabinet = useGLTF("./white-dresser-with-fully-modelled-drawers.glb");
-  const chair = useGLTF("./plastic-lawn-chair.glb");
-  const couch = useGLTF("./couch.glb");
-  const door = useGLTF("./door.glb");
+  const bookshelfModel = useGLTF("./shelf.glb");
+  const cabinetModel = useGLTF(
+    "./white-dresser-with-fully-modelled-drawers.glb",
+  );
+  const chairModel = useGLTF("./plastic-lawn-chair.glb");
+  const couchModel = useGLTF("./couch.glb");
+  const doorModel = useGLTF("./door.glb");
+  const pointerRef = useRef(new THREE.Vector2());
+  const raycaster = new THREE.Raycaster();
 
-  const [hoverStates, setHoverStates] =
-    useState<HoverStates>(initialHoverStates);
+  const bookshelf = useMemo(
+    () => defineCustomName(bookshelfModel, MODELS.BOOKSHELF),
+    [bookshelfModel],
+  );
+  const chair = useMemo(
+    () => defineCustomName(chairModel, MODELS.CHAIR),
+    [chairModel],
+  );
+  const couch = useMemo(
+    () => defineCustomName(couchModel, MODELS.COUCH),
+    [couchModel],
+  );
+  const door = useMemo(
+    () => defineCustomName(doorModel, MODELS.DOOR),
+    [doorModel],
+  );
+  const cabinet = useMemo(
+    () => defineCustomName(cabinetModel, MODELS.CABINET),
+    [cabinetModel],
+  );
 
-  const isAnyModelHovered = Object.values(hoverStates).includes(true);
-  useCursor(isAnyModelHovered);
+  const [selectedModel, setSelectedModel] = useState<Model | null>(null);
+
+  const pointerDownScreenPosition = useRef<ScreenPosition>({
+    x: null,
+    y: null,
+  });
+  const pointerUpScreenPosition = useRef<ScreenPosition>({ x: null, y: null });
+
+  useCursor(!!selectedModel);
 
   const objectRef = useRef(null);
-
+  const cameraRef = useRef(null);
   const {
     position: bookshelfPosition,
     scaleX: bookShelfScaleX,
@@ -125,130 +172,164 @@ function Test() {
     scaleZ: { value: 1, min: 0, max: 2 },
   });
 
+  const { position: cameraPosition } = useControls({
+    position: {
+      value: {
+        x: -3,
+        y: 1.1,
+        z: 4.5,
+      },
+      step: 0.1,
+    },
+  });
+
   const doorScale = [doorScaleX, doorScaleY, doorScaleZ];
 
-  console.log(hoverStates);
-  console.log(isAnyModelHovered);
-  const setBookShelfHoverStateTrue = () => {
-    setHoverStates({ ...hoverStates, [MODELS.BOOKSHELF]: true });
+  const updateCameraOrbit = () => {
+    // Update OrbitControls target to a point just in front of the camera
+    const controls = get().controls;
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    controls?.target.copy(camera.position).add(forward);
   };
-  const setBookShelfHoverStateFalse = () => {
-    setHoverStates({ ...hoverStates, [MODELS.BOOKSHELF]: false });
-  };
-  const setCouchHoverStateTrue = () => {
-    setHoverStates({ ...hoverStates, [MODELS.COUCH]: true });
-  };
-  const setCouchHoverStateFalse = () => {
-    setHoverStates({ ...hoverStates, [MODELS.COUCH]: false });
-  };
-  const setDoorHoverStateTrue = () => {
-    setHoverStates({ ...hoverStates, [MODELS.DOOR]: true });
-  };
-  const setDoorHoverStateFalse = () => {
-    setHoverStates({ ...hoverStates, [MODELS.DOOR]: false });
-  };
-  const setCabinetHoverStateTrue = () => {
-    setHoverStates({ ...hoverStates, [MODELS.CABINET]: true });
-  };
-  const setCabinetHoverStateFalse = () => {
-    setHoverStates({ ...hoverStates, [MODELS.CABINET]: false });
-  };
-  const setChairHoverStateTrue = () => {
-    setHoverStates({ ...hoverStates, [MODELS.CHAIR]: true });
-  };
-  const setChairHoverStateFalse = () => {
-    setHoverStates({ ...hoverStates, [MODELS.CHAIR]: false });
+  const { camera, scene } = useThree();
+
+  const { get } = useThree();
+
+  const handleClickFloor = (event) => {
+    const isOrbiting =
+      pointerDownScreenPosition.current.x !==
+        pointerUpScreenPosition.current.x &&
+      pointerDownScreenPosition.current.y !== pointerUpScreenPosition.current.y;
+    if (selectedModel || isOrbiting) {
+      return;
+    }
+
+    const clickPoint = event.intersections[0]?.point;
+    if (clickPoint) {
+      camera.position.set(clickPoint.x, 1.1, clickPoint.z);
+    }
+
+    updateCameraOrbit();
   };
 
+  function checkIntersection() {
+    raycaster.setFromCamera(pointerRef.current, camera);
+    const intersects = raycaster.intersectObject(scene, true);
+    if (intersects.length > 0) {
+      const newSelectedModel = intersects[0].object.userData.customName;
+      if (newSelectedModel === selectedModel) {
+        return;
+      }
+      setSelectedModel(newSelectedModel);
+    } else {
+      setSelectedModel(null);
+    }
+  }
+
+  useFrame((state) => {
+    const {
+      pointer: { x, y },
+    } = state;
+
+    pointerRef.current.x = x;
+    pointerRef.current.y = y;
+    checkIntersection();
+  });
+
   return (
-    <div
-      style={{ width: "100vw", height: "100vh", overflow: "hidden", margin: 0 }}
-    >
-      <Canvas
-        style={{ background: "black" }} // Set background color here
+    <>
+      <PerspectiveCamera
+        makeDefault
+        manual
+        args={[45, window.innerWidth / window.innerHeight, 1, 1000]}
+        ref={cameraRef}
+        position={[cameraPosition.x, cameraPosition.y, cameraPosition.z]}
+      />
+      {/* <axesHelper args={[100]} /> */}
+      <OrbitControls
+        makeDefault
+        enablePan={false}
+        enableZoom={false}
+        maxPolarAngle={Math.PI / 2}
+        target={[-3, 1.1, 4.51]}
+      />
+      <ambientLight intensity={Math.PI / 2} />
+      <spotLight
+        position={[10, 10, 10]}
+        angle={0.15}
+        penumbra={1}
+        decay={0}
+        intensity={Math.PI}
+      />
+      {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
+      <mesh
+        rotation={[Math.PI / 2, 0, 0]}
+        onClick={handleClickFloor}
+        onPointerUp={(e) => {
+          pointerUpScreenPosition.current.x = e.x;
+          pointerUpScreenPosition.current.y = e.y;
+        }}
+        onPointerDown={(e) => {
+          pointerDownScreenPosition.current.x = e.x;
+          pointerDownScreenPosition.current.y = e.y;
+        }}
       >
-        <axesHelper args={[100]} />
-        <OrbitControls makeDefault />
-        <ambientLight intensity={Math.PI / 2} />
-        <spotLight
-          position={[10, 10, 10]}
-          angle={0.15}
-          penumbra={1}
-          decay={0}
-          intensity={Math.PI}
-        />
-        {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[30, 30]} />
-          <meshStandardMaterial side={THREE.DoubleSide} color="white" />
-        </mesh>
-        <Selection>
-          <EffectComposer autoClear={false}>
-            <Outline
-              edgeStrength={30} // the edge strength
-            />
-          </EffectComposer>
-          <Select enabled={hoverStates[MODELS.BOOKSHELF]}>
-            <primitive
-              position={[
-                bookshelfPosition.x,
-                bookshelfPosition.y,
-                bookshelfPosition.z,
-              ]}
-              object={bookshelf.scene}
-              scale={bookShelfScale}
-              onPointerOver={setBookShelfHoverStateTrue}
-              onPointerOut={setBookShelfHoverStateFalse}
-              ref={objectRef}
-            />
-          </Select>
-          <Select enabled={hoverStates[MODELS.CABINET]}>
-            <primitive
-              position={[
-                cabinetPosition.x,
-                cabinetPosition.y,
-                cabinetPosition.z,
-              ]}
-              object={cabinet.scene}
-              scale={cabinetScale}
-              onPointerOver={setCabinetHoverStateTrue}
-              onPointerOut={setCabinetHoverStateFalse}
-              ref={objectRef}
-            />
-          </Select>
-          <Select enabled={hoverStates[MODELS.CHAIR]}>
-            <primitive
-              position={[chairPosition.x, chairPosition.y, chairPosition.z]}
-              object={chair.scene}
-              scale={chairScale}
-              onPointerOver={setChairHoverStateTrue}
-              onPointerOut={setChairHoverStateFalse}
-              ref={objectRef}
-            />
-          </Select>
-          <Select enabled={hoverStates[MODELS.COUCH]}>
-            <primitive
-              position={[couchPosition.x, couchPosition.y, couchPosition.z]}
-              object={couch.scene}
-              scale={couchScale}
-              onPointerOver={setCouchHoverStateTrue}
-              onPointerOut={setCouchHoverStateFalse}
-              ref={objectRef}
-            />
-          </Select>
-          <Select enabled={hoverStates[MODELS.DOOR]}>
-            <primitive
-              position={[doorPosition.x, doorPosition.y, doorPosition.z]}
-              object={door.scene}
-              scale={doorScale}
-              onPointerOver={setDoorHoverStateTrue}
-              onPointerOut={setDoorHoverStateFalse}
-              ref={objectRef}
-            />
-          </Select>
-        </Selection>
-      </Canvas>
-    </div>
+        <planeGeometry args={[30, 30]} />
+        <meshStandardMaterial side={THREE.DoubleSide} color="white" />
+      </mesh>
+      <Selection>
+        <EffectComposer autoClear={false}>
+          <Outline
+            edgeStrength={30} // the edge strength
+          />
+        </EffectComposer>
+        <Select enabled={selectedModel === MODELS.BOOKSHELF}>
+          <primitive
+            position={[
+              bookshelfPosition.x,
+              bookshelfPosition.y,
+              bookshelfPosition.z,
+            ]}
+            object={bookshelf.scene}
+            scale={bookShelfScale}
+            ref={objectRef}
+          />
+        </Select>
+        <Select enabled={selectedModel === MODELS.CABINET}>
+          <primitive
+            position={[cabinetPosition.x, cabinetPosition.y, cabinetPosition.z]}
+            object={cabinet.scene}
+            scale={cabinetScale}
+            ref={objectRef}
+          />
+        </Select>
+        <Select enabled={selectedModel === MODELS.CHAIR}>
+          <primitive
+            position={[chairPosition.x, chairPosition.y, chairPosition.z]}
+            object={chair.scene}
+            scale={chairScale}
+            ref={objectRef}
+          />
+        </Select>
+        <Select enabled={selectedModel === MODELS.COUCH}>
+          <primitive
+            position={[couchPosition.x, couchPosition.y, couchPosition.z]}
+            object={couch.scene}
+            scale={couchScale}
+            ref={objectRef}
+          />
+        </Select>
+        <Select enabled={selectedModel === MODELS.DOOR}>
+          <primitive
+            position={[doorPosition.x, doorPosition.y, doorPosition.z]}
+            object={door.scene}
+            scale={doorScale}
+            ref={objectRef}
+          />
+        </Select>
+      </Selection>
+    </>
   );
 }
 

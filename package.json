@@ -53,7 +53,7 @@
     }
   },
   "lint-staged": {
-    "**/*.{ts,tsx}": "eslint --cache --quiet --fix",
+    "**/*.{ts,tsx}": "eslint --cache --fix --max-warnings=0",
     "**/*": "prettier --write --ignore-unknown"
   }
 }

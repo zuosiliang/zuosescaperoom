@@ -14,7 +14,7 @@ import {
   Select,
 } from "@react-three/postprocessing";
 import { useThree, useFrame } from "@react-three/fiber";
-import { MODELS, Model } from "./const";
+import { MODELS, Model, TOO_FAR_TEXT } from "./const";
 import * as THREE from "three";
 
 type ScreenPosition = {
@@ -45,6 +45,7 @@ function Test() {
     showBookshelfText,
     tools,
     updateTools,
+    showTooFarText,
   } = useInterface();
 
   const bookshelfModel = useGLTF("./shelf.glb");
@@ -89,7 +90,6 @@ function Test() {
 
   useCursor(!!hoveredModel && !bookshelfText);
 
-  const objectRef = useRef(null);
   const cameraRef = useRef(null);
   const {
     position: bookshelfPosition,
@@ -219,14 +219,59 @@ function Test() {
     updateCameraOrbit();
   };
 
-  const handleClickPaper = () => {
-    setIsPaperPickedUp(true);
-    updateTools([...tools, MODELS.PAPER]);
-  };
-
   const handleClickBookshelf = (event) => {
     event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.BOOKSHELF]);
+      return;
+    }
     showBookshelfText();
+  };
+
+  const handleClickChair = (event) => {
+    event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.CHAIR]);
+      return;
+    }
+    showBookshelfText();
+  };
+
+  const handleClickCabinet = (event) => {
+    event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.CABINET]);
+      return;
+    }
+    showBookshelfText();
+  };
+
+  const handleClickDoor = (event) => {
+    event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.DOOR]);
+      return;
+    }
+    showBookshelfText();
+  };
+
+  const handleClickCouch = (event) => {
+    event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.COUCH]);
+      return;
+    }
+    showBookshelfText();
+  };
+
+  const handleClickPaper = (event) => {
+    event.stopPropagation();
+    if (event.distance > 2) {
+      showTooFarText(TOO_FAR_TEXT[MODELS.PAPER]);
+      return;
+    }
+    setIsPaperPickedUp(true);
+    updateTools([...tools, MODELS.PAPER]);
   };
 
   function checkIntersection() {
@@ -309,7 +354,6 @@ function Test() {
             ]}
             object={bookshelf.scene}
             scale={bookShelfScale}
-            ref={objectRef}
             onClick={handleClickBookshelf}
           />
         </Select>
@@ -332,7 +376,7 @@ function Test() {
             position={[cabinetPosition.x, cabinetPosition.y, cabinetPosition.z]}
             object={cabinet.scene}
             scale={cabinetScale}
-            ref={objectRef}
+            onClick={handleClickCabinet}
           />
         </Select>
         <Select enabled={hoveredModel === MODELS.CHAIR}>
@@ -340,7 +384,7 @@ function Test() {
             position={[chairPosition.x, chairPosition.y, chairPosition.z]}
             object={chair.scene}
             scale={chairScale}
-            ref={objectRef}
+            onClick={handleClickChair}
           />
         </Select>
         <Select enabled={hoveredModel === MODELS.COUCH}>
@@ -348,7 +392,7 @@ function Test() {
             position={[couchPosition.x, couchPosition.y, couchPosition.z]}
             object={couch.scene}
             scale={couchScale}
-            ref={objectRef}
+            onClick={handleClickCouch}
           />
         </Select>
         <Select enabled={hoveredModel === MODELS.DOOR}>
@@ -356,7 +400,7 @@ function Test() {
             position={[doorPosition.x, doorPosition.y, doorPosition.z]}
             object={door.scene}
             scale={doorScale}
-            ref={objectRef}
+            onClick={handleClickDoor}
           />
         </Select>
       </Selection>

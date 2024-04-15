@@ -4,7 +4,8 @@ export type Model =
   | "CHAIR"
   | "COUCH"
   | "DOOR"
-  | "PAPER";
+  | "PAPER"
+  | "FLOOR";
 
 export const MODELS: Record<Model, Model> = {
   BOOKSHELF: "BOOKSHELF",
@@ -13,6 +14,7 @@ export const MODELS: Record<Model, Model> = {
   COUCH: "COUCH",
   DOOR: "DOOR",
   PAPER: "PAPER",
+  FLOOR: "FLOOR",
 };
 
 export const DIALOGS: Record<Model, string> = {

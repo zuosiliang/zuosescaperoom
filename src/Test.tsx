@@ -81,6 +81,9 @@ function Test() {
 
   const [hoveredModel, setHoveredModel] = useState<Model | null>(null);
   const [isPaperPickedUp, setIsPaperPickedUp] = useState(false);
+  const [footprintPosition, setFootprintPosition] = useState(
+    new THREE.Vector3(3, 0.1, 0),
+  );
 
   const pointerDownScreenPosition = useRef<ScreenPosition>({
     x: null,
@@ -88,7 +91,9 @@ function Test() {
   });
   const pointerUpScreenPosition = useRef<ScreenPosition>({ x: null, y: null });
 
-  useCursor(!!hoveredModel && !bookshelfText);
+  const isAnyModelThanFloorHovered =
+    hoveredModel && hoveredModel !== MODELS.FLOOR;
+  useCursor(isAnyModelThanFloorHovered && !bookshelfText);
 
   const cameraRef = useRef(null);
   const {
@@ -207,7 +212,7 @@ function Test() {
       pointerDownScreenPosition.current.x !==
         pointerUpScreenPosition.current.x &&
       pointerDownScreenPosition.current.y !== pointerUpScreenPosition.current.y;
-    if (hoveredModel || isOrbiting) {
+    if (isAnyModelThanFloorHovered || isOrbiting) {
       return;
     }
 
@@ -277,12 +282,30 @@ function Test() {
   function checkIntersection() {
     raycaster.setFromCamera(pointerRef.current, camera);
     const intersects = raycaster.intersectObject(scene, true);
+
+    /** 鼠标是否在模型上 */
     if (intersects.length > 0) {
       const newhoveredModel = intersects[0].object.userData.customName;
+      const intersectPoint = intersects[0].point;
+      /** 鼠标在地板上 */
+      if (newhoveredModel === MODELS.FLOOR) {
+        setHoveredModel(MODELS.FLOOR);
+        const newPosition = new THREE.Vector3(
+          intersectPoint.x,
+          intersectPoint.y + 0.01,
+          intersectPoint.z,
+        );
+        setFootprintPosition(newPosition);
+        return;
+      }
+      /** 鼠标还在同个模型上 */
       if (newhoveredModel === hoveredModel) {
         return;
       }
-      setHoveredModel(newhoveredModel);
+      /**鼠标在非地板的模型上 */
+      if (newhoveredModel !== MODELS.FLOOR) {
+        setHoveredModel(newhoveredModel);
+      }
     } else {
       setHoveredModel(null);
     }
@@ -325,6 +348,7 @@ function Test() {
       />
       {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
       <mesh
+        userData={{ customName: MODELS.FLOOR }}
         rotation={[Math.PI / 2, 0, 0]}
         onClick={handleClickFloor}
         onPointerUp={(e) => {
@@ -338,6 +362,14 @@ function Test() {
       >
         <planeGeometry args={[30, 30]} />
         <meshStandardMaterial side={THREE.DoubleSide} color="white" />
+      </mesh>
+      <mesh
+        position={footprintPosition}
+        rotation={[Math.PI / 2, 0, 0]}
+        onClick={handleClickPaper}
+      >
+        <torusGeometry args={[0.1, 0.01, 2, 74]} />
+        <meshStandardMaterial color="red" />
       </mesh>
       <Selection>
         <EffectComposer autoClear={false}>

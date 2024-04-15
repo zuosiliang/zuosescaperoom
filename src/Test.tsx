@@ -1,4 +1,5 @@
 import { useControls } from "leva";
+import { useInterface } from "./store/useInterface";
 import {
   useCursor,
   useGLTF,
@@ -13,22 +14,12 @@ import {
   Select,
 } from "@react-three/postprocessing";
 import { useThree, useFrame } from "@react-three/fiber";
-
+import { MODELS, Model } from "./const";
 import * as THREE from "three";
-
-export type Model = "BOOKSHELF" | "CABINET" | "CHAIR" | "COUCH" | "DOOR";
 
 type ScreenPosition = {
   x: number | null;
   y: number | null;
-};
-
-const MODELS: Record<Model, Model> = {
-  BOOKSHELF: "BOOKSHELF",
-  CABINET: "CABINET",
-  CHAIR: "CHAIR",
-  COUCH: "COUCH",
-  DOOR: "DOOR",
 };
 
 export type HoverStates = Record<Model, boolean>;
@@ -49,6 +40,10 @@ const defineCustomName = (obj, customName: Model) => {
 };
 
 function Test() {
+  const bookshelfText = useInterface((state) => state.text);
+
+  const showBookshelfText = useInterface((state) => state.showBookshelfText);
+
   const bookshelfModel = useGLTF("./shelf.glb");
   const cabinetModel = useGLTF(
     "./white-dresser-with-fully-modelled-drawers.glb",
@@ -80,7 +75,7 @@ function Test() {
     [cabinetModel],
   );
 
-  const [selectedModel, setSelectedModel] = useState<Model | null>(null);
+  const [hoveredModel, setHoveredModel] = useState<Model | null>(null);
 
   const pointerDownScreenPosition = useRef<ScreenPosition>({
     x: null,
@@ -88,7 +83,7 @@ function Test() {
   });
   const pointerUpScreenPosition = useRef<ScreenPosition>({ x: null, y: null });
 
-  useCursor(!!selectedModel);
+  useCursor(!!hoveredModel && !bookshelfText);
 
   const objectRef = useRef(null);
   const cameraRef = useRef(null);
@@ -201,7 +196,7 @@ function Test() {
       pointerDownScreenPosition.current.x !==
         pointerUpScreenPosition.current.x &&
       pointerDownScreenPosition.current.y !== pointerUpScreenPosition.current.y;
-    if (selectedModel || isOrbiting) {
+    if (hoveredModel || isOrbiting) {
       return;
     }
 
@@ -213,17 +208,22 @@ function Test() {
     updateCameraOrbit();
   };
 
+  const handleClickBookshelf = (event) => {
+    event.stopPropagation();
+    showBookshelfText();
+  };
+
   function checkIntersection() {
     raycaster.setFromCamera(pointerRef.current, camera);
     const intersects = raycaster.intersectObject(scene, true);
     if (intersects.length > 0) {
-      const newSelectedModel = intersects[0].object.userData.customName;
-      if (newSelectedModel === selectedModel) {
+      const newhoveredModel = intersects[0].object.userData.customName;
+      if (newhoveredModel === hoveredModel) {
         return;
       }
-      setSelectedModel(newSelectedModel);
+      setHoveredModel(newhoveredModel);
     } else {
-      setSelectedModel(null);
+      setHoveredModel(null);
     }
   }
 
@@ -284,7 +284,7 @@ function Test() {
             edgeStrength={30} // the edge strength
           />
         </EffectComposer>
-        <Select enabled={selectedModel === MODELS.BOOKSHELF}>
+        <Select enabled={hoveredModel === MODELS.BOOKSHELF}>
           <primitive
             position={[
               bookshelfPosition.x,
@@ -294,9 +294,10 @@ function Test() {
             object={bookshelf.scene}
             scale={bookShelfScale}
             ref={objectRef}
+            onClick={handleClickBookshelf}
           />
         </Select>
-        <Select enabled={selectedModel === MODELS.CABINET}>
+        <Select enabled={hoveredModel === MODELS.CABINET}>
           <primitive
             position={[cabinetPosition.x, cabinetPosition.y, cabinetPosition.z]}
             object={cabinet.scene}
@@ -304,7 +305,7 @@ function Test() {
             ref={objectRef}
           />
         </Select>
-        <Select enabled={selectedModel === MODELS.CHAIR}>
+        <Select enabled={hoveredModel === MODELS.CHAIR}>
           <primitive
             position={[chairPosition.x, chairPosition.y, chairPosition.z]}
             object={chair.scene}
@@ -312,7 +313,7 @@ function Test() {
             ref={objectRef}
           />
         </Select>
-        <Select enabled={selectedModel === MODELS.COUCH}>
+        <Select enabled={hoveredModel === MODELS.COUCH}>
           <primitive
             position={[couchPosition.x, couchPosition.y, couchPosition.z]}
             object={couch.scene}
@@ -320,7 +321,7 @@ function Test() {
             ref={objectRef}
           />
         </Select>
-        <Select enabled={selectedModel === MODELS.DOOR}>
+        <Select enabled={hoveredModel === MODELS.DOOR}>
           <primitive
             position={[doorPosition.x, doorPosition.y, doorPosition.z]}
             object={door.scene}

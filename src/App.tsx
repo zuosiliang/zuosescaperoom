@@ -1,4 +1,5 @@
 import Test from "./Test";
+import Interface from "./Interface";
 import { Canvas } from "@react-three/fiber";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <Canvas style={{ background: "black" }}>
         <Test />
       </Canvas>
+      <Interface />
     </div>
   );
 }

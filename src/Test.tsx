@@ -40,9 +40,12 @@ const defineCustomName = (obj, customName: Model) => {
 };
 
 function Test() {
-  const bookshelfText = useInterface((state) => state.text);
-
-  const showBookshelfText = useInterface((state) => state.showBookshelfText);
+  const {
+    text: bookshelfText,
+    showBookshelfText,
+    tools,
+    updateTools,
+  } = useInterface();
 
   const bookshelfModel = useGLTF("./shelf.glb");
   const cabinetModel = useGLTF(
@@ -76,6 +79,7 @@ function Test() {
   );
 
   const [hoveredModel, setHoveredModel] = useState<Model | null>(null);
+  const [isPaperPickedUp, setIsPaperPickedUp] = useState(false);
 
   const pointerDownScreenPosition = useRef<ScreenPosition>({
     x: null,
@@ -180,6 +184,13 @@ function Test() {
 
   const doorScale = [doorScaleX, doorScaleY, doorScaleZ];
 
+  const { position: paperPosition } = useControls(MODELS.PAPER, {
+    position: {
+      value: { x: 3, y: 0.3, z: 0 },
+      step: 0.01,
+    },
+  });
+
   const updateCameraOrbit = () => {
     // Update OrbitControls target to a point just in front of the camera
     const controls = get().controls;
@@ -206,6 +217,11 @@ function Test() {
     }
 
     updateCameraOrbit();
+  };
+
+  const handleClickPaper = () => {
+    setIsPaperPickedUp(true);
+    updateTools([...tools, MODELS.PAPER]);
   };
 
   const handleClickBookshelf = (event) => {
@@ -297,6 +313,20 @@ function Test() {
             onClick={handleClickBookshelf}
           />
         </Select>
+        {isPaperPickedUp ? null : (
+          <Select enabled={hoveredModel === MODELS.PAPER}>
+            <mesh
+              userData={{ customName: MODELS.PAPER }}
+              position={[paperPosition.x, paperPosition.y, paperPosition.z]}
+              rotation={[Math.PI / 2, 0, 0]}
+              onClick={handleClickPaper}
+            >
+              <boxGeometry args={[1, 1, 1]} />
+              <meshStandardMaterial side={THREE.DoubleSide} color="hotpink" />
+            </mesh>
+          </Select>
+        )}
+
         <Select enabled={hoveredModel === MODELS.CABINET}>
           <primitive
             position={[cabinetPosition.x, cabinetPosition.y, cabinetPosition.z]}

@@ -8,6 +8,6 @@ export const useInterface = create((set) => ({
   closeDialog: () => set({ text: null }),
   openBag: () => set({ isBagOpened: true }),
   closeBag: () => set({ isBagOpened: false }),
-  tools: [1],
+  tools: [],
   updateTools: (newTools) => set({ tools: newTools }),
 }));

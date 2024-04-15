@@ -1,4 +1,10 @@
-export type Model = "BOOKSHELF" | "CABINET" | "CHAIR" | "COUCH" | "DOOR";
+export type Model =
+  | "BOOKSHELF"
+  | "CABINET"
+  | "CHAIR"
+  | "COUCH"
+  | "DOOR"
+  | "PAPER";
 
 export const MODELS: Record<Model, Model> = {
   BOOKSHELF: "BOOKSHELF",
@@ -6,6 +12,7 @@ export const MODELS: Record<Model, Model> = {
   CHAIR: "CHAIR",
   COUCH: "COUCH",
   DOOR: "DOOR",
+  PAPER: "PAPER",
 };
 
 export const DIALOGS: Record<Model, string> = {
@@ -14,4 +21,9 @@ export const DIALOGS: Record<Model, string> = {
   CHAIR: "CHAIR",
   COUCH: "COUCH",
   DOOR: "DOOR",
+  PAPER: "PAPER",
+};
+
+export const TOOLS_IMG: Record<Model, string> = {
+  PAPER: "paper",
 };

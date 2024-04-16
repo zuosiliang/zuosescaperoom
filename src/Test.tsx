@@ -14,8 +14,15 @@ import {
   Select,
 } from "@react-three/postprocessing";
 import { useThree, useFrame } from "@react-three/fiber";
-import { MODELS, Model, TOO_FAR_TEXT } from "./const";
+import {
+  MODELS,
+  Model,
+  TOO_FAR_TEXT,
+  COUCH_STATE,
+  MODEL_TEXT_MAP,
+} from "./const";
 import * as THREE from "three";
+import { gsap } from "gsap";
 
 type ScreenPosition = {
   x: number | null;
@@ -42,10 +49,10 @@ const defineCustomName = (obj, customName: Model) => {
 function Test() {
   const {
     text: bookshelfText,
-    showBookshelfText,
     tools,
     updateTools,
-    showTooFarText,
+    showDialog,
+    couchState,
   } = useInterface();
 
   const bookshelfModel = useGLTF("./shelf.glb");
@@ -218,61 +225,69 @@ function Test() {
 
     const clickPoint = event.intersections[0]?.point;
     if (clickPoint) {
-      camera.position.set(clickPoint.x, 1.1, clickPoint.z);
+      gsap.to(camera.position, {
+        duration: 1,
+        x: clickPoint.x,
+        y: 1.1,
+        z: clickPoint.z,
+        onUpdate: function () {
+          updateCameraOrbit();
+        },
+      });
     }
-
-    updateCameraOrbit();
   };
 
   const handleClickBookshelf = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.BOOKSHELF]);
+      showDialog(TOO_FAR_TEXT[MODELS.BOOKSHELF]);
       return;
     }
-    showBookshelfText();
+    showDialog();
   };
 
   const handleClickChair = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.CHAIR]);
+      showDialog(TOO_FAR_TEXT[MODELS.CHAIR]);
       return;
     }
-    showBookshelfText();
+    showDialog();
   };
 
   const handleClickCabinet = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.CABINET]);
+      showDialog(TOO_FAR_TEXT[MODELS.CABINET]);
       return;
     }
-    showBookshelfText();
+    showDialog();
   };
 
   const handleClickDoor = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.DOOR]);
+      showDialog(TOO_FAR_TEXT[MODELS.DOOR]);
       return;
     }
-    showBookshelfText();
+    showDialog();
   };
 
   const handleClickCouch = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.COUCH]);
+      showDialog(TOO_FAR_TEXT[MODELS.COUCH]);
       return;
     }
-    showBookshelfText();
+    if (couchState === COUCH_STATE.FIRST_GLANCE) {
+      showDialog(MODEL_TEXT_MAP[MODELS.COUCH][COUCH_STATE.FIRST_GLANCE]);
+    }
   };
 
   const handleClickPaper = (event) => {
     event.stopPropagation();
     if (event.distance > 2) {
-      showTooFarText(TOO_FAR_TEXT[MODELS.PAPER]);
+      showDialog(TOO_FAR_TEXT[MODELS.PAPER]);
       return;
     }
     setIsPaperPickedUp(true);

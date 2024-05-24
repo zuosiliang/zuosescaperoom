@@ -1,0 +1,30 @@
+import { useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+function Bookshelf(props) {
+  const { nodes, materials } = useGLTF("/bookshelf.glb");
+  const { gl } = useThree();
+  const environment = new RoomEnvironment(gl);
+  const pmremGenerator = new THREE.PMREMGenerator(gl);
+  materials.phong1SG1.envMapIntensity = 0.1;
+
+  materials.phong1SG1.envMap = pmremGenerator.fromScene(environment).texture;
+
+  return (
+    <group {...props} dispose={null}>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Book_Shelf_phong1SG1_0.geometry}
+        material={materials.phong1SG1}
+        scale={0.01}
+      />
+    </group>
+  );
+}
+
+useGLTF.preload("/bookshelf.glb");
+
+export default Bookshelf;

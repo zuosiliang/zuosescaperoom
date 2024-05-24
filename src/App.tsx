@@ -2,7 +2,10 @@ import Game from "./Game";
 import Interface from "./uiComponents/Interface";
 import { Canvas } from "@react-three/fiber";
 import { Leva } from "leva";
+import { Perf } from "r3f-perf";
 
+//TODO
+// 支持resize
 function App() {
   return (
     <div
@@ -10,6 +13,7 @@ function App() {
     >
       <Canvas style={{ background: "black" }} shadows>
         <Game />
+        <Perf position="top-left" />
       </Canvas>
       <Interface />
       <Leva collapsed />

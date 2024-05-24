@@ -475,16 +475,16 @@ function Game() {
     rotation: lightRotation,
   } = useControls(MODELS.LIGHT, {
     position: {
-      value: { x: -0.47, y: 1.87, z: 2.23 },
+      value: { x: -0.47, y: 2.36, z: 2.23 },
       step: 0.01,
     },
     rotation: {
       value: { x: 0, y: 0, z: 0 },
       step: 0.01,
     },
-    scaleX: { value: 0.005, min: 0, max: 2 },
-    scaleY: { value: 0.005, min: 0, max: 2 },
-    scaleZ: { value: 0.005, min: 0, max: 2 },
+    scaleX: { value: 0.18, min: 0, max: 2 },
+    scaleY: { value: 0.18, min: 0, max: 2 },
+    scaleZ: { value: 0.18, min: 0, max: 2 },
   });
   const lightScale = [lightScaleX, lightScaleY, lightScaleZ];
 
@@ -1139,7 +1139,6 @@ function Game() {
             position={[lightPosition.x, lightPosition.y, lightPosition.z]}
             rotation={[lightRotation.x, lightRotation.y, lightRotation.z]}
             scale={lightScale}
-            // onClick={inEventModel ? noop : handleClickDoor}
           />
         </Select>
         <Select

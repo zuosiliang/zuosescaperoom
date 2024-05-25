@@ -4,7 +4,7 @@ import { useThree } from "@react-three/fiber";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 function Bookshelf(props) {
-  const { nodes, materials } = useGLTF("/bookshelf.glb");
+  const { nodes, materials } = useGLTF("/bookshelf-v2.glb");
   const { gl } = useThree();
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
@@ -25,6 +25,6 @@ function Bookshelf(props) {
   );
 }
 
-useGLTF.preload("/bookshelf.glb");
+useGLTF.preload("/bookshelf-v2.glb");
 
 export default Bookshelf;

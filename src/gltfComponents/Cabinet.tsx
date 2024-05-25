@@ -11,7 +11,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
   const { tools } = useGame();
 
   const group = useRef();
-  const { nodes, materials } = useGLTF("/cabinet_a-v1.glb");
+  const { nodes, materials } = useGLTF("/cabinet-v2.glb");
   const { gl } = useThree();
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
@@ -22,88 +22,73 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Sketchfab_Scene">
-        <group
-          name="Sketchfab_model"
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={0.01}
-        >
-          <group name="fbx_mergefbx" rotation={[Math.PI / 2, 0, 0]}>
-            <group name="Object_2">
-              <group name="RootNode">
-                <group
-                  name="CabinetA_Frame"
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                >
-                  <mesh
-                    name="CabinetA_Frame_Drawer_0"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.CabinetA_Frame_Drawer_0.geometry}
-                    material={materials.Drawer}
-                  />
-                </group>
-                <group
-                  name="CabinetA_DrawerLower"
-                  position={[-0.001, 33.214, 0.133]}
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                >
-                  <mesh
-                    name="CabinetA_DrawerLower_Drawer_0"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.CabinetA_DrawerLower_Drawer_0.geometry}
-                    material={materials.Drawer}
-                  />
-                </group>
-                <group
-                  name="CabinetA_DrawerMiddle"
-                  position={[0, 59.432, 0.05]}
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                >
-                  <mesh
-                    name="CabinetA_DrawerMiddle_Drawer_0"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.CabinetA_DrawerMiddle_Drawer_0.geometry}
-                    material={materials.Drawer}
-                  />
-                </group>
-                <group
-                  name="CabinetA_DrawerUpper"
-                  position={[0, 79.603, 0.05]}
-                  // position={[0, 79.603, 40.05]}
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                >
-                  {tools.includes(MODELS.PUZZLE_PAPER) ? null : (
-                    <PuzzlePaper
-                      // position={[-2.44, 0.51, 3.81]}
-                      position={[0, 0, -0.07]}
-                      scale={0.01}
-                      rotation={[Math.PI / 2, 0, 0]}
-                      onClick={onClickPuzzlePaper}
-                    />
-                  )}
-                  <mesh
-                    name="CabinetA_DrawerUpper_Drawer_0"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.CabinetA_DrawerUpper_Drawer_0.geometry}
-                    material={materials.Drawer}
-                  />
-                </group>
-              </group>
-            </group>
+        <group name="RootNode" scale={0.01}>
+          <group
+            name="CabinetA_DrawerLower"
+            position={[-0.001, 33.214, 0.133]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
+          >
+            <mesh
+              name="CabinetA_DrawerLower_Drawer_0"
+              castShadow
+              receiveShadow
+              geometry={nodes.CabinetA_DrawerLower_Drawer_0.geometry}
+              material={materials.Drawer}
+            />
+          </group>
+          <group
+            name="CabinetA_DrawerMiddle"
+            position={[0, 59.432, 0.05]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
+          >
+            <mesh
+              name="CabinetA_DrawerMiddle_Drawer_0"
+              castShadow
+              receiveShadow
+              geometry={nodes.CabinetA_DrawerMiddle_Drawer_0.geometry}
+              material={materials.Drawer}
+            />
+          </group>
+          <group
+            name="CabinetA_DrawerUpper"
+            position={[0, 79.603, 0.05]}
+            // position={[0, 79.603, 40.05]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
+          >
+            {tools.includes(MODELS.PUZZLE_PAPER) ? null : (
+              <PuzzlePaper
+                // position={[-2.44, 0.51, 3.81]}
+                position={[0, 0, -0.07]}
+                scale={0.01}
+                rotation={[Math.PI / 2, 0, 0]}
+                onClick={onClickPuzzlePaper}
+              />
+            )}
+            <mesh
+              name="CabinetA_DrawerUpper_Drawer_0"
+              castShadow
+              receiveShadow
+              geometry={nodes.CabinetA_DrawerUpper_Drawer_0.geometry}
+              material={materials.Drawer}
+            />
           </group>
         </group>
+        <mesh
+          name="CabinetA_Frame_Drawer_0"
+          castShadow
+          receiveShadow
+          geometry={nodes.CabinetA_Frame_Drawer_0.geometry}
+          material={materials.Drawer}
+          rotation={[-Math.PI / 2, 0, 0]}
+        />
       </group>
     </group>
   );
 }
 
-useGLTF.preload("/cabinet_a-v1.glb");
+useGLTF.preload("/cabinet-v2.glb");
 
 export default Cabinet;

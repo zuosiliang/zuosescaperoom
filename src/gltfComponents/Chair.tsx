@@ -8,8 +8,8 @@ function Chair(props) {
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
 
-  const { nodes, materials } = useGLTF("/chair.glb");
-  materials.dcm_steel.envMapIntensity = 0.1;
+  const { nodes, materials } = useGLTF("/chair-v3.glb");
+  materials.dcm_steel.envMapIntensity = 0.6;
   materials.dcm_rubber.envMapIntensity = 0.3;
   materials.dcm_wood.envMapIntensity = 0.3;
 
@@ -41,6 +41,6 @@ function Chair(props) {
   );
 }
 
-useGLTF.preload("/chair.glb");
+useGLTF.preload("/chair-v3.glb");
 
 export default Chair;

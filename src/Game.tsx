@@ -4,6 +4,7 @@ import {
   useCursor,
   useGLTF,
   OrbitControls,
+  // FlyControls,
   PerspectiveCamera,
   useHelper,
 } from "@react-three/drei";
@@ -36,6 +37,7 @@ import CoffeeTable from "./gltfComponents/Coffee-table";
 import Painting from "./gltfComponents/Painting";
 import TvControl from "./gltfComponents/TvControl";
 import TipPaper from "./gltfComponents/TipPaper";
+import Turnable from "./gltfComponents/Turnable";
 
 const noop = () => {};
 
@@ -93,15 +95,13 @@ function Game() {
   const raycaster = new THREE.Raycaster();
   const cameraStateRef = useRef(null);
 
-  const couchModel = useGLTF("./sofa.glb");
+  const couchModel = useGLTF("./sofa-v4.glb");
   // const tvModel = useGLTF("./led_tv.glb");
-  const tvCabinetModel = useGLTF("./tvCabinet.glb");
+  const tvCabinetModel = useGLTF("./tvCabinet-v2.glb");
 
-  const beanbagModel = useGLTF("./beanbag.glb");
+  const beanbagModel = useGLTF("./beanbag-v3.glb");
 
-  const turnableModel = useGLTF("./turnable.glb");
-
-  const dishModel = useGLTF("./dish.glb");
+  const dishModel = useGLTF("./dish-v2.glb");
 
   // const room = useGLTF("./room-v1.glb");
 
@@ -118,10 +118,6 @@ function Game() {
   const beanbag = useMemo(
     () => defineCustomName(beanbagModel, MODELS.BEAN_BAG),
     [beanbagModel],
-  );
-  const turnable = useMemo(
-    () => defineCustomName(turnableModel, MODELS.TURNABLE),
-    [turnableModel],
   );
 
   const dish = useMemo(
@@ -329,7 +325,7 @@ function Game() {
     rotation: doorRotation,
   } = useControls(MODELS.DOOR, {
     position: {
-      value: { x: 2.44, y: 0, z: 1.62 },
+      value: { x: 2.4, y: 0.03, z: 1.59 },
       step: 0.01,
     },
     rotation: {
@@ -1178,7 +1174,7 @@ function Game() {
         <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.TURNABLE)}
         >
-          <primitive
+          <Turnable
             castShadow
             receiveShadow
             position={[
@@ -1191,7 +1187,6 @@ function Game() {
               turnableRotation.y,
               turnableRotation.z,
             ]}
-            object={turnable.scene}
             scale={turnableScale}
             onClick={inEventModel ? noop : handleClickTurnable}
           />

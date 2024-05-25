@@ -9,7 +9,12 @@ import {
   useHelper,
 } from "@react-three/drei";
 import { useRef, useMemo, useEffect } from "react";
-import { EffectComposer, Selection, Select } from "@react-three/postprocessing";
+import {
+  EffectComposer,
+  Selection,
+  Select,
+  Outline,
+} from "@react-three/postprocessing";
 import { useThree, useFrame } from "@react-three/fiber";
 import {
   MODELS,
@@ -1040,10 +1045,10 @@ function Game() {
 
       <Selection>
         <EffectComposer autoClear={false}>
-          {/* <Outline
+          <Outline
             edgeStrength={30} // the edge strength
           />
-          <Bloom mipmapBlur luminanceThreshold={1} levels={8} intensity={1} /> */}
+          {/* <Bloom mipmapBlur luminanceThreshold={1} levels={8} intensity={1} /> */}
         </EffectComposer>
         <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.BOOKSHELF)}
@@ -1115,6 +1120,8 @@ function Game() {
             scale={doorScale}
             onClick={inEventModel ? noop : handleClickDoor}
           />
+        </Select>
+        <Select enabled={[hoveredModel, inEventModel].includes(MODELS.LOCK)}>
           <Lock
             position={[lockPosition.x, lockPosition.y, lockPosition.z]}
             rotation={[lockRotation.x, lockRotation.y, lockRotation.z]}
@@ -1217,6 +1224,48 @@ function Game() {
             // onClick={inEventModel ? noop : handleClickDoor}
           />
         </Select>
+        <Select
+          enabled={[hoveredModel, inEventModel].includes(MODELS.PAINTING)}
+        >
+          <Painting
+            position={[
+              paintingPosition.x,
+              paintingPosition.y,
+              paintingPosition.z,
+            ]}
+            rotation={[
+              paintingRotation.x,
+              paintingRotation.y,
+              paintingRotation.z,
+            ]}
+            scale={paintingScale}
+            onClick={inEventModel ? noop : handleClickPainting}
+          />
+        </Select>
+        {tools.includes(MODELS.TV_CONTROL) ? null : (
+          <Select
+            enabled={[hoveredModel, inEventModel].includes(MODELS.TV_CONTROL)}
+          >
+            <TvControl
+              position={[
+                tvControlPosition.x,
+                tvControlPosition.y,
+                tvControlPosition.z,
+              ]}
+              rotation={[
+                tvControlRotation.x,
+                tvControlRotation.y,
+                tvControlRotation.z,
+              ]}
+              scale={tvControlScale}
+              onClick={
+                [null, MODELS.BOOKSHELF].includes(inEventModel)
+                  ? handleClickTvControl
+                  : noop
+              }
+            />
+          </Select>
+        )}
       </Selection>
       <Room
         onClickFloor={handleClickFloor}
@@ -1229,32 +1278,7 @@ function Game() {
         scale={curtainScale}
         // onClick={inEventModel ? noop : handleClickDoor}
       /> */}
-      <Painting
-        position={[paintingPosition.x, paintingPosition.y, paintingPosition.z]}
-        rotation={[paintingRotation.x, paintingRotation.y, paintingRotation.z]}
-        scale={paintingScale}
-        onClick={inEventModel ? noop : handleClickPainting}
-      />
-      {tools.includes(MODELS.TV_CONTROL) ? null : (
-        <TvControl
-          position={[
-            tvControlPosition.x,
-            tvControlPosition.y,
-            tvControlPosition.z,
-          ]}
-          rotation={[
-            tvControlRotation.x,
-            tvControlRotation.y,
-            tvControlRotation.z,
-          ]}
-          scale={tvControlScale}
-          onClick={
-            [null, MODELS.BOOKSHELF].includes(inEventModel)
-              ? handleClickTvControl
-              : noop
-          }
-        />
-      )}
+
       {tools.includes(MODELS.TIP_PAPER) ? null : (
         <TipPaper
           position={[

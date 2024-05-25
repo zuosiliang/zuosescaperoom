@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { MODELS } from "../const";
 
 function CoffeeTable(props) {
   const { nodes, materials } = useGLTF("/coffee-table-v3.glb");
@@ -12,6 +13,7 @@ function CoffeeTable(props) {
         material={materials.M_Grid}
         rotation={[-Math.PI / 2, 0, 2.356]}
         scale={[0.507, 0.507, 0.843]}
+        userData={{ customName: MODELS.COFFEE_TABLE }}
       />
       <mesh
         castShadow
@@ -20,6 +22,7 @@ function CoffeeTable(props) {
         material={materials.M_Side_Table}
         rotation={[-Math.PI / 2, 0, 2.356]}
         scale={[0.507, 0.507, 0.843]}
+        userData={{ customName: MODELS.COFFEE_TABLE }}
       />
       <mesh
         castShadow
@@ -28,6 +31,7 @@ function CoffeeTable(props) {
         material={materials.M_Slider}
         rotation={[-Math.PI / 2, 0, 2.356]}
         scale={[0.507, 0.507, 0.843]}
+        userData={{ customName: MODELS.COFFEE_TABLE }}
       />
       <mesh
         castShadow
@@ -36,6 +40,7 @@ function CoffeeTable(props) {
         material={materials.M_Vienna_Straw}
         rotation={[-Math.PI / 2, 0, 2.356]}
         scale={[0.507, 0.507, 0.843]}
+        userData={{ customName: MODELS.COFFEE_TABLE }}
       />
     </group>
   );

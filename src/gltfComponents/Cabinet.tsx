@@ -35,6 +35,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
               receiveShadow
               geometry={nodes.CabinetA_DrawerLower_Drawer_0.geometry}
               material={materials.Drawer}
+              userData={{ customName: MODELS.CABINET }}
             />
           </group>
           <group
@@ -49,6 +50,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
               receiveShadow
               geometry={nodes.CabinetA_DrawerMiddle_Drawer_0.geometry}
               material={materials.Drawer}
+              userData={{ customName: MODELS.CABINET }}
             />
           </group>
           <group
@@ -73,6 +75,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
               receiveShadow
               geometry={nodes.CabinetA_DrawerUpper_Drawer_0.geometry}
               material={materials.Drawer}
+              userData={{ customName: MODELS.CABINET }}
             />
           </group>
         </group>
@@ -83,6 +86,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
           geometry={nodes.CabinetA_Frame_Drawer_0.geometry}
           material={materials.Drawer}
           rotation={[-Math.PI / 2, 0, 0]}
+          userData={{ customName: MODELS.CABINET }}
         />
       </group>
     </group>

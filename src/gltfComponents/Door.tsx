@@ -2,6 +2,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { MODELS } from "../const";
 
 // TODO
 // 1.输入正确密码后，再点击门需展示打开门的动画
@@ -30,6 +31,7 @@ function Door(props) {
         material={materials.Frame}
         rotation={[-Math.PI / 2, 0, 0]}
         scale={0.001}
+        userData={{ customName: MODELS.DOOR }}
       />
       <mesh
         castShadow
@@ -39,6 +41,7 @@ function Door(props) {
         position={[-0.916, 0, 0.117]}
         rotation={[-Math.PI / 2, 0, -Math.PI]}
         scale={0.001}
+        userData={{ customName: MODELS.DOOR }}
       />
       <mesh
         castShadow
@@ -48,6 +51,7 @@ function Door(props) {
         position={[-0.149, 0.98, 0.095]}
         rotation={[-Math.PI / 2, 0, 0]}
         scale={0.001}
+        userData={{ customName: MODELS.DOOR }}
       />
     </group>
   );

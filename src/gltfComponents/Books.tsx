@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { MODELS } from "../const";
 
 function Books(props) {
   const { nodes, materials } = useGLTF("/books-v5.glb");
@@ -12,6 +13,7 @@ function Books(props) {
         material={materials.material}
         position={[0.062, 0.436, 0]}
         scale={0.5}
+        userData={{ customName: MODELS.BOOKS }}
       />
     </group>
   );

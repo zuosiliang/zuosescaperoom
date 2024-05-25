@@ -55,6 +55,7 @@ function Lock(props) {
             geometry={nodes["#"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickHash}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -62,6 +63,7 @@ function Lock(props) {
             geometry={nodes["*"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickStar}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             ref={numRef}
@@ -70,6 +72,7 @@ function Lock(props) {
             geometry={nodes["0"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickZero}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -77,6 +80,7 @@ function Lock(props) {
             geometry={nodes["1"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickOne}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -84,6 +88,7 @@ function Lock(props) {
             geometry={nodes["2"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickTwo}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -91,6 +96,7 @@ function Lock(props) {
             geometry={nodes["3"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickThree}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -98,6 +104,7 @@ function Lock(props) {
             geometry={nodes["4"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickFour}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -105,6 +112,7 @@ function Lock(props) {
             geometry={nodes["5"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickFive}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -112,6 +120,7 @@ function Lock(props) {
             geometry={nodes["6"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickSix}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -119,6 +128,7 @@ function Lock(props) {
             geometry={nodes["7"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickSeven}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -126,6 +136,7 @@ function Lock(props) {
             geometry={nodes["8"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickEight}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
@@ -133,12 +144,14 @@ function Lock(props) {
             geometry={nodes["9"].geometry}
             material={materials.KeypadDoorLock}
             onClick={handleClickNine}
+            userData={{ customName: MODELS.LOCK }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.KeypadDoorLock_KeypadDoorLock_0.geometry}
             material={materials.KeypadDoorLock}
+            userData={{ customName: MODELS.LOCK }}
           />
         </group>
       </group>

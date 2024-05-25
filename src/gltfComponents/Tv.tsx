@@ -2,6 +2,7 @@ import { useGLTF, useVideoTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { useGame } from "../store/useGame";
 import { TV_STATE } from "../const";
+import { MODELS } from "../const";
 
 // TODO
 // 修复视频材质没有正好填满屏幕的问题
@@ -19,6 +20,7 @@ function Tv(props) {
           receiveShadow
           geometry={nodes.led_tv_phong1_0.geometry}
           material={materials.phong1}
+          userData={{ customName: MODELS.TV }}
         />
         <mesh
           castShadow
@@ -32,7 +34,8 @@ function Tv(props) {
                 })
               : materials.phong1
           }
-        ></mesh>
+          userData={{ customName: MODELS.TV }}
+        />
       </group>
     </group>
   );

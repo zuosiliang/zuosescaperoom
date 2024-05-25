@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { MODELS } from "../const";
 
 function TvControl(props) {
   const { nodes, materials } = useGLTF("/tv-remote-control-v2.glb");
@@ -10,6 +11,7 @@ function TvControl(props) {
         geometry={nodes.Object_2.geometry}
         material={materials.base}
         rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ customName: MODELS.TV_CONTROL }}
       />
       <mesh
         castShadow
@@ -17,6 +19,7 @@ function TvControl(props) {
         geometry={nodes.Object_3.geometry}
         material={materials.basemate}
         rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ customName: MODELS.TV_CONTROL }}
       />
       <mesh
         castShadow
@@ -24,6 +27,7 @@ function TvControl(props) {
         geometry={nodes.Object_4.geometry}
         material={materials.buttons}
         rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ customName: MODELS.TV_CONTROL }}
       />
     </group>
   );

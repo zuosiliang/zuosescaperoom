@@ -3,6 +3,7 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMemo } from "react";
+import { MODELS } from "../const";
 
 function Turnable(props) {
   const { nodes, materials } = useGLTF("/turnable-v2.glb");
@@ -30,72 +31,84 @@ function Turnable(props) {
             receiveShadow
             geometry={nodes.defaultMaterial.geometry}
             material={modifiedMaterials["1004"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial001.geometry}
             material={modifiedMaterials["1014"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial002.geometry}
             material={modifiedMaterials["1012"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial003.geometry}
             material={modifiedMaterials["1013"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial004.geometry}
             material={modifiedMaterials["1002"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial006.geometry}
             material={modifiedMaterials["1003"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial007.geometry}
             material={modifiedMaterials["1006"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial008.geometry}
             material={modifiedMaterials["1001"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial009.geometry}
             material={modifiedMaterials["1017"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial010.geometry}
             material={modifiedMaterials["1005"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial011.geometry}
             material={modifiedMaterials["1015"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.defaultMaterial012.geometry}
             material={modifiedMaterials["1011"]}
+            userData={{ customName: MODELS.TURNABLE }}
           />
         </group>
       </group>

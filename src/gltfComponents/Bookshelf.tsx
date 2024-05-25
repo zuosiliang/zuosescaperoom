@@ -2,6 +2,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { MODELS } from "../const";
 
 function Bookshelf(props) {
   const { nodes, materials } = useGLTF("/bookshelf-v2.glb");
@@ -20,6 +21,7 @@ function Bookshelf(props) {
         geometry={nodes.Book_Shelf_phong1SG1_0.geometry}
         material={materials.phong1SG1}
         scale={0.01}
+        userData={{ customName: MODELS.BOOKSHELF }}
       />
     </group>
   );

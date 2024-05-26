@@ -9,41 +9,45 @@ function Room({ onClickFloor, ...props }) {
   const [floorColorMap, floorNormalMap, floorRoughMap] = useLoader(
     THREE.TextureLoader,
     [
-      "./Wood_Floor_005_COLOR.jpg",
-      "./Wood_Floor_005_NORM.jpg",
-      "./Wood_Floor_005_ROUGH.jpg",
+      "./laminate_floor_02_diff_1k.jpg",
+      "./laminate_floor_02_nor_gl_1k.jpg",
+      "./laminate_floor_02_rough_1k.jpg",
     ],
   );
 
   floorColorMap.wrapS = THREE.RepeatWrapping;
   floorColorMap.wrapT = THREE.RepeatWrapping;
-  floorColorMap.repeat.set(8, 8); // Adjust the scale here
+  floorColorMap.repeat.set(12, 12); // Adjust the scale here
 
   floorNormalMap.wrapS = THREE.RepeatWrapping;
   floorNormalMap.wrapT = THREE.RepeatWrapping;
-  floorNormalMap.repeat.set(8, 8); // Adjust the scale here
+  floorNormalMap.repeat.set(12, 12); // Adjust the scale here
 
   floorRoughMap.wrapS = THREE.RepeatWrapping;
   floorRoughMap.wrapT = THREE.RepeatWrapping;
-  floorRoughMap.repeat.set(8, 8); // Adjust the scale here
+  floorRoughMap.repeat.set(12, 12); // Adjust the scale here
 
   const [wallBaseColorMap, wallNormalMap, wallRoughnessMap] = useLoader(
     THREE.TextureLoader,
-    ["./wall-color.png", "./wall-normal.png", "./wall-rough.png"],
+    [
+      "./beige_wall_001_diff_1k.jpg",
+      "./beige_wall_001_nor_gl_1k.jpg",
+      "./beige_wall_001_rough_1k.jpg",
+    ],
   );
 
   wallBaseColorMap.wrapS = THREE.RepeatWrapping;
   wallBaseColorMap.wrapT = THREE.RepeatWrapping;
-  wallBaseColorMap.repeat.set(8, 8); // Adjust the scale here
+  wallBaseColorMap.repeat.set(20, 20); // Adjust the scale here
   wallBaseColorMap.colorSpace = THREE.SRGBColorSpace;
 
   wallNormalMap.wrapS = THREE.RepeatWrapping;
   wallNormalMap.wrapT = THREE.RepeatWrapping;
-  wallNormalMap.repeat.set(8, 8); // Adjust the scale here
+  wallNormalMap.repeat.set(20, 20); // Adjust the scale here
 
   wallRoughnessMap.wrapS = THREE.RepeatWrapping;
   wallRoughnessMap.wrapT = THREE.RepeatWrapping;
-  wallRoughnessMap.repeat.set(8, 8); // Adjust the scale here
+  wallRoughnessMap.repeat.set(20, 20); // Adjust the scale here
 
   return (
     <group {...props} dispose={null}>
@@ -56,7 +60,7 @@ function Room({ onClickFloor, ...props }) {
         userData={{ customName: MODELS.WALL }}
       >
         <meshStandardMaterial
-          side={THREE.DoubleSide}
+          side={THREE.BackSide}
           // color="pink"
           map={wallBaseColorMap}
           normalMap={wallNormalMap}
@@ -75,7 +79,7 @@ function Room({ onClickFloor, ...props }) {
         userData={{ customName: MODELS.FLOOR }}
       >
         <meshStandardMaterial
-          side={THREE.DoubleSide}
+          side={THREE.BackSide}
           // color="white"
           map={floorColorMap}
           normalMap={floorNormalMap}

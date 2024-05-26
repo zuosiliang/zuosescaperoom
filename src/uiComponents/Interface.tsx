@@ -4,6 +4,8 @@ import Dialog from "./Dialog";
 import BagSelect from "./BagSelect";
 
 // TODO
+//
+// DONE
 // 找个好看点的道具图标
 const Interface = () => {
   const { text, isBagOpened } = useGame();

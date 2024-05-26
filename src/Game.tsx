@@ -42,21 +42,23 @@ import CoffeeTable from "./gltfComponents/Coffee-table";
 import Painting from "./gltfComponents/Painting";
 import TvControl from "./gltfComponents/TvControl";
 import TipPaper from "./gltfComponents/TipPaper";
-import Turnable from "./gltfComponents/Turnable";
+// import Turnable from "./gltfComponents/Turnable";
 
 const noop = () => {};
 
 export type HoverStates = Record<Model, boolean>;
 
 // TODO
+// 1. 修复聚焦时camera移动路径跳跃的问题
+// 2. 增加点光源，bloom effect，软阴影
+// 3. 性能优化
+// 4. 动态窗帘效果
+// 5. 开始游戏转场效果
+// 6. 在blender中把门的位置打个洞，让门正好嵌入洞中
+//
+// DONE
 // 1. 鼠标hover在地板上时展示圆圈
 // 2. 鼠标hover在模型上显示outline
-// 3. 修复聚焦时camera移动路径跳跃的问题
-// 4. 增加点光源，bloom effect，软阴影
-// 5. 性能优化
-// 6. 动态窗帘效果
-// 7. 开始游戏转场效果
-// 8. 在blender中把门的位置打个洞，让门正好嵌入洞中
 
 function Game() {
   const defineCustomName = (obj, customName: Model) => {
@@ -130,16 +132,16 @@ function Game() {
     [dishModel],
   );
 
-  // const [footprintPosition, setFootprintPosition] = useState(
-  //   new THREE.Vector3(0, 0.1, 0),
-  // );
+  const footprintRef = useRef(null);
 
   const isClickRef = useRef(false);
+  const mouseDownRef = useRef(false);
+  const isAnyModelThanRoomHovered =
+    hoveredModel && ![MODELS.FLOOR, MODELS.WALL].includes(hoveredModel);
+  useCursor(isAnyModelThanRoomHovered && !bookshelfText);
 
-  const isAnyModelThanFloorHovered =
-    hoveredModel && hoveredModel !== MODELS.FLOOR;
-  useCursor(isAnyModelThanFloorHovered && !bookshelfText);
-
+  const isAnyModelThanRoomHoveredRef = useRef(null);
+  isAnyModelThanRoomHoveredRef.current = isAnyModelThanRoomHovered;
   const cameraRef = useRef(null);
   const {
     position: bookshelfPosition,
@@ -214,27 +216,27 @@ function Game() {
 
   const beanbagScale = [beanbagScaleX, beanbagScaleY, beanbagScaleZ];
 
-  const {
-    position: turnablePosition,
-    scaleX: turnableScaleX,
-    scaleY: turnableScaleY,
-    scaleZ: turnableScaleZ,
-    rotation: turnableRotation,
-  } = useControls(MODELS.TURNABLE, {
-    position: {
-      value: { x: -2.71, y: 0.74, z: 3.63 },
-      step: 0.01,
-    },
-    rotation: {
-      value: { x: 0, y: 0, z: 0 },
-      step: 0.01,
-    },
-    scaleX: { value: 1, min: 0, max: 2 },
-    scaleY: { value: 1, min: 0, max: 2 },
-    scaleZ: { value: 1, min: 0, max: 2 },
-  });
+  // const {
+  //   position: turnablePosition,
+  //   scaleX: turnableScaleX,
+  //   scaleY: turnableScaleY,
+  //   scaleZ: turnableScaleZ,
+  //   rotation: turnableRotation,
+  // } = useControls(MODELS.TURNABLE, {
+  //   position: {
+  //     value: { x: -2.71, y: 0.74, z: 3.63 },
+  //     step: 0.01,
+  //   },
+  //   rotation: {
+  //     value: { x: 0, y: 0, z: 0 },
+  //     step: 0.01,
+  //   },
+  //   scaleX: { value: 1, min: 0, max: 2 },
+  //   scaleY: { value: 1, min: 0, max: 2 },
+  //   scaleZ: { value: 1, min: 0, max: 2 },
+  // });
 
-  const turnableScale = [turnableScaleX, turnableScaleY, turnableScaleZ];
+  // const turnableScale = [turnableScaleX, turnableScaleY, turnableScaleZ];
 
   const {
     position: lampPosition,
@@ -605,7 +607,7 @@ function Game() {
   const { get } = useThree();
 
   const handleClickFloor = (event) => {
-    if (isAnyModelThanFloorHovered || !isClickRef.current) {
+    if (isAnyModelThanRoomHovered || !isClickRef.current) {
       return;
     }
 
@@ -623,14 +625,6 @@ function Game() {
     }
   };
 
-  useEffect(() => {
-    document.addEventListener("mousedown", () => {
-      isClickRef.current = true;
-    });
-    document.addEventListener("mousemove", () => {
-      isClickRef.current = false;
-    });
-  }, []);
   const saveCurrentCameraState = () => {
     const quaternion = new THREE.Quaternion();
     const currentPosition = new THREE.Vector3();
@@ -843,19 +837,19 @@ function Game() {
     lookAtModel(MODELS.LAMP);
   };
 
-  const handleClickTurnable = (event) => {
-    event.stopPropagation();
-    setInEventModel(MODELS.TURNABLE);
-    setIsModelClose(event.distance <= 2);
-    saveCurrentCameraState();
-    setRestoreFreePlayCallback(restoreFreePlay);
-    if (event.distance > 2) {
-      showDialog(TOO_FAR_TEXT);
-      return;
-    }
-    showDialog("现在用黑胶唱片机的人真是不多了啊");
-    lookAtModel(MODELS.TURNABLE);
-  };
+  // const handleClickTurnable = (event) => {
+  //   event.stopPropagation();
+  //   setInEventModel(MODELS.TURNABLE);
+  //   setIsModelClose(event.distance <= 2);
+  //   saveCurrentCameraState();
+  //   setRestoreFreePlayCallback(restoreFreePlay);
+  //   if (event.distance > 2) {
+  //     showDialog(TOO_FAR_TEXT);
+  //     return;
+  //   }
+  //   showDialog("现在用黑胶唱片机的人真是不多了啊");
+  //   lookAtModel(MODELS.TURNABLE);
+  // };
 
   const handleClickPainting = (event) => {
     event.stopPropagation();
@@ -939,24 +933,33 @@ function Game() {
     setTvState(TV_STATE.TV_CONTROL_PICKED_UP);
   };
 
+  // TODO
+  // 1. cursor在wall上，显示大手图标，在物体/floor上，显示食指图标，开始拖动时，变成抓紧图标
+  //
+  // DONE
+  // 1. 开始拖动视角时取消outline
+  // 2. 解决点击路面切换位置时卡顿
   function checkIntersection() {
-    raycaster.setFromCamera(pointerRef.current, camera);
+    raycaster.setFromCamera(pointerRef.current, cameraRef.current);
     const intersects = raycaster.intersectObject(scene, true);
 
     /** 鼠标是否在模型上 */
     if (intersects.length > 0) {
       const newhoveredModel = intersects[0].object.userData.customName;
 
-      // const intersectPoint = intersects[0].point;
+      const intersectPoint = intersects[0].point;
       /** 鼠标在地板上 */
       if (newhoveredModel === MODELS.FLOOR) {
-        setHoveredModel(MODELS.FLOOR);
-        // const newPosition = new THREE.Vector3(
-        //   intersectPoint.x,
-        //   intersectPoint.y + 0.01,
-        //   intersectPoint.z,
-        // );
-        // setFootprintPosition(newPosition);
+        if (hoveredModel !== MODELS.FLOOR) {
+          setHoveredModel(MODELS.FLOOR);
+        }
+        footprintRef.current.visible = true;
+        footprintRef.current.position.set(
+          intersectPoint.x,
+          intersectPoint.y + 0.01,
+          intersectPoint.z,
+        );
+
         return;
       }
       /** 鼠标还在同个模型上 */
@@ -966,6 +969,7 @@ function Game() {
       /**鼠标在非地板的模型上 */
       if (newhoveredModel !== MODELS.FLOOR) {
         setHoveredModel(newhoveredModel);
+        footprintRef.current.visible = false;
       }
     } else {
       setHoveredModel(null);
@@ -976,13 +980,42 @@ function Game() {
     const {
       pointer: { x, y },
     } = state;
-
+    const previousX = pointerRef.current.x;
+    const previousY = pointerRef.current.y;
     pointerRef.current.x = x;
     pointerRef.current.y = y;
-    checkIntersection();
+
+    // 当不处于drag orbitcontrols状态，并且鼠标已经移动，才重新计算射线
+    if (mouseDownRef.current === false && previousX !== x && previousY !== y) {
+      checkIntersection();
+    }
   });
 
   useHelper(pointLightRef, THREE.PointLightHelper, 0.1);
+
+  // isClickRef是用来区分click和drag的，所以click和drag两种状态下isClick布尔值是互反的
+  // mouseDownRef用来区分drag和mousemove,当鼠标按下时候触发mousemove，属于drag事件；当鼠标未按下时候触发mousemove，属于mousemove事件
+  //
+  useEffect(() => {
+    document.addEventListener("mousedown", () => {
+      isClickRef.current = true;
+      mouseDownRef.current = true;
+    });
+    document.addEventListener("mousemove", () => {
+      isClickRef.current = false;
+
+      if (mouseDownRef.current === true) {
+        if (isAnyModelThanRoomHoveredRef.current) {
+          setHoveredModel(null);
+        }
+        footprintRef.current.visible = false;
+      }
+    });
+    document.addEventListener("mouseup", () => {
+      mouseDownRef.current = false;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -1010,6 +1043,7 @@ function Game() {
         target={[-1.01, 1.51, 3.41]}
         enabled={!inEventModel}
         rotateSpeed={-1}
+        // panSpeed={10}
       />
       <ambientLight intensity={Math.PI} />
 
@@ -1032,16 +1066,11 @@ function Game() {
         // shadow-bias={-0.001}
         // decay={0}
       /> */}
-      {/* {inEventModel === null && hoveredModel === MODELS.FLOOR ? (
-        <mesh
-          position={footprintPosition}
-          rotation={[Math.PI / 2, 0, 0]}
-          // onClick={handleClickPaper}
-        >
-          <torusGeometry args={[0.1, 0.01, 2, 74]} />
-          <meshBasicMaterial color="white" transparent opacity={0.2} />
-        </mesh>
-      ) : null} */}
+      <mesh ref={footprintRef} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.1, 0.01, 2, 74]} />
+
+        <meshBasicMaterial color="white" transparent opacity={0.2} />
+      </mesh>
 
       <Selection>
         <EffectComposer autoClear={false}>
@@ -1178,7 +1207,7 @@ function Game() {
             onClick={inEventModel ? noop : handleClickBeanbag}
           />
         </Select>
-        <Select
+        {/* <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.TURNABLE)}
         >
           <Turnable
@@ -1197,7 +1226,7 @@ function Game() {
             scale={turnableScale}
             onClick={inEventModel ? noop : handleClickTurnable}
           />
-        </Select>
+        </Select> */}
         <Select enabled={[hoveredModel, inEventModel].includes(MODELS.LAMP)}>
           <Lamp
             position={[lampPosition.x, lampPosition.y, lampPosition.z]}

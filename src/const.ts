@@ -19,7 +19,8 @@ export type Model =
   | "CURTAIN"
   | "TV_CONTROL"
   | "PUZZLE_PAPER"
-  | "TIP_PAPER";
+  | "TIP_PAPER"
+  | "WALL";
 
 export const MODELS: Record<Model, Model> = {
   BOOKSHELF: "BOOKSHELF",
@@ -43,6 +44,7 @@ export const MODELS: Record<Model, Model> = {
   TV_CONTROL: "TV_CONTROL",
   PUZZLE_PAPER: "PUZZLE_PAPER",
   TIP_PAPER: "TIP_PAPER",
+  WALL: "WALL",
 };
 
 export type ModelStringMap = Partial<Record<Model, string>>;

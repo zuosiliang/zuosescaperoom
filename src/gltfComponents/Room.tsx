@@ -53,7 +53,7 @@ function Room({ onClickFloor, ...props }) {
         geometry={nodes.Cube.geometry}
         material={materials.Material}
         position={[0, 1, 0]}
-        userData={{ customName: "WALL" }}
+        userData={{ customName: MODELS.WALL }}
       >
         <meshStandardMaterial
           side={THREE.DoubleSide}

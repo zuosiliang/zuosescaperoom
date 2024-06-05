@@ -43,6 +43,7 @@ import Painting from "./gltfComponents/Painting";
 import TvControl from "./gltfComponents/TvControl";
 import TipPaper from "./gltfComponents/TipPaper";
 // import Turnable from "./gltfComponents/Turnable";
+import Curtain from "./gltfComponents/Curtain";
 
 const noop = () => {};
 
@@ -505,27 +506,27 @@ function Game() {
     },
   );
 
-  // const {
-  //   position: curtainPosition,
-  //   scaleX: curtainScaleX,
-  //   scaleY: curtainScaleY,
-  //   scaleZ: curtainScaleZ,
-  //   rotation: curtainRotation,
-  // } = useControls(MODELS.CURTAIN, {
-  //   position: {
-  //     value: { x: -3.6, y: 0.27, z: 2.22 },
-  //     step: 0.01,
-  //   },
-  //   rotation: {
-  //     value: { x: 0, y: 1.57, z: 0 },
-  //     step: 0.01,
-  //   },
-  //   scaleX: { value: 0.8, min: 0, max: 2 },
-  //   scaleY: { value: 0.8, min: 0, max: 2 },
-  //   scaleZ: { value: 0.8, min: 0, max: 2 },
-  // });
+  const {
+    position: curtainPosition,
+    scaleX: curtainScaleX,
+    scaleY: curtainScaleY,
+    scaleZ: curtainScaleZ,
+    rotation: curtainRotation,
+  } = useControls(MODELS.CURTAIN, {
+    position: {
+      value: { x: -3.6, y: 0.27, z: 2.22 },
+      step: 0.01,
+    },
+    rotation: {
+      value: { x: 0, y: 1.57, z: 0 },
+      step: 0.01,
+    },
+    scaleX: { value: 0.8, min: 0, max: 2 },
+    scaleY: { value: 0.8, min: 0, max: 2 },
+    scaleZ: { value: 0.8, min: 0, max: 2 },
+  });
 
-  // const curtainScale = [curtainScaleX, curtainScaleY, curtainScaleZ];
+  const curtainScale = [curtainScaleX, curtainScaleY, curtainScaleZ];
 
   const {
     position: paintingPosition,
@@ -1301,12 +1302,12 @@ function Game() {
         position={[roomPosition.x, roomPosition.y, roomPosition.z]}
         rotation={[roomRotation.x, roomRotation.y, roomRotation.z]}
       />
-      {/* <Curtain
+      <Curtain
         position={[curtainPosition.x, curtainPosition.y, curtainPosition.z]}
         rotation={[curtainRotation.x, curtainRotation.y, curtainRotation.z]}
         scale={curtainScale}
         // onClick={inEventModel ? noop : handleClickDoor}
-      /> */}
+      />
 
       {tools.includes(MODELS.TIP_PAPER) ? null : (
         <TipPaper

@@ -1045,8 +1045,8 @@ function Game() {
         // maxPolarAngle={Math.PI / 2}
         target={[-1.01, 1.51, 3.41]}
         enabled={!inEventModel}
-        rotateSpeed={-1}
-        // panSpeed={10}
+        rotateSpeed={-0.5}
+        enableDamping={false}
       />
       <ambientLight intensity={Math.PI} />
 

@@ -615,13 +615,14 @@ function Game() {
     const clickPoint = event.intersections[0]?.point;
     if (clickPoint) {
       gsap.to(camera.position, {
-        duration: 1,
+        duration: 0.8,
         x: clickPoint.x,
         y: 1.7,
         z: clickPoint.z,
         onUpdate: function () {
           updateCameraOrbit();
         },
+        ease: "power1.in",
       });
     }
   };

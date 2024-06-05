@@ -5,8 +5,6 @@ import { TV_STATE } from "../const";
 import { MODELS } from "../const";
 import { useEffect, useCallback } from "react";
 
-// TODO
-//
 // DONE
 // 修复视频材质没有正好填满屏幕的问题
 function Tv(props) {

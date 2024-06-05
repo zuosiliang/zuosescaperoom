@@ -56,6 +56,7 @@ export type HoverStates = Record<Model, boolean>;
 // 4. 动态窗帘效果
 // 5. 开始游戏转场效果
 // 6. 在blender中把门的位置打个洞，让门正好嵌入洞中
+// 7. 增加一个镜子模型
 //
 // DONE
 // 1. 鼠标hover在地板上时展示圆圈

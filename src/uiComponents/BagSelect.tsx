@@ -1,5 +1,5 @@
 import { useGame } from "../store/useGame";
-import { Model, MODEL_NAME_MAP, MODEL_TOOL_MAP } from "../const";
+import { Model, MODEL_NAME_MAP, MODEL_TOOL_MAP, TOOL_PIC_MAP } from "../const";
 import { useState } from "react";
 
 const BagButton = ({ text, onClick }) => {
@@ -59,7 +59,9 @@ const BagSelect = () => {
                 <span className="text-4xl">{MODEL_NAME_MAP[tool]}</span>
                 {selectedTool === tool ? (
                   <hr className="border-[#213547] border-2" />
-                ) : null}
+                ) : (
+                  <div className="h-[4px]" />
+                )}
               </div>
             ))}
           </div>
@@ -74,9 +76,14 @@ const BagSelect = () => {
 
       {/**
        * TODO
-       * 当选中道具后，右边应该显示一个3D viewer
+       * 当选中道具后，右边应该显示一个3D viewer，而不是静态图片
        *
        */}
+      {selectedTool ? (
+        <div className="flex justify-center grow py-[100px]">
+          <img src={`./${TOOL_PIC_MAP[selectedTool]}`} />
+        </div>
+      ) : null}
     </div>
   );
 };

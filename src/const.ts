@@ -385,3 +385,9 @@ export const MODEL_TOOL_MAP = {
 };
 
 export const CORRECT_PASSWORD = [6, 1, 2];
+
+export const TOOL_PIC_MAP = {
+  PUZZLE_PAPER: "puzzle-paper.png",
+  TV_CONTROL: "tv-control.png",
+  TIP_PAPER: "tip-paper.png",
+};

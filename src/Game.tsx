@@ -378,9 +378,9 @@ function Game() {
   const { position: cameraPosition } = useControls("camera", {
     position: {
       value: {
-        x: -1,
-        y: 1.5,
-        z: 3.4,
+        x: 2.3,
+        y: 1.7,
+        z: 1,
       },
       step: 0.1,
     },
@@ -1069,7 +1069,7 @@ function Game() {
         enablePan={false}
         enableZoom={false}
         // maxPolarAngle={Math.PI / 2}
-        target={[-1.01, 1.51, 3.41]}
+        target={[2.201, 1.701, 1.008]}
         enabled={!inEventModel}
         rotateSpeed={-0.5}
         enableDamping={false}

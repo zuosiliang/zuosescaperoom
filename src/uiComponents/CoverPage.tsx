@@ -2,14 +2,17 @@ import { gsap } from "gsap";
 import { useGame } from "../store/useGame";
 
 const CoverPage = () => {
-  const { gameStarted, setGameStarted } = useGame();
+  const { gameStarted, setGameStarted, showDialog } = useGame();
   const handleClick = () => {
     setGameStarted(true);
     gsap.to(".banner", {
-      duration: 4,
+      duration: 3,
       x: -10000,
       stagger: 0.1,
       ease: "none",
+      onComplete: () => {
+        showDialog("这是什么地方，我怎么莫名其妙出现在了这里，想办法逃出去吧");
+      },
     });
   };
 

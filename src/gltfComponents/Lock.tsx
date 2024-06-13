@@ -5,7 +5,7 @@ import { useGame } from "../store/useGame";
 
 // TODO
 // 1.鼠标点击时应该有音效 optional
-// 2.按#号后应该根据密码是否正确显示绿光红光 optional
+// 2.输入#号时，按钮未显示动画
 //
 // DONE
 // 1.按钮点击后应该要有位移动画

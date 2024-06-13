@@ -61,6 +61,8 @@ export type HoverStates = Record<Model, boolean>;
 // 3. 动态窗帘效果
 // 4. 增加一个镜子模型
 // 5. hover在模型上有时cursor pointer 和outline会不出现
+// 6. hover在地板上有时光圈不出现
+
 //
 // DONE
 // 1. 鼠标hover在地板上时展示圆圈

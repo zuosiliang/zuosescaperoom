@@ -2,7 +2,7 @@ import Game from "./Game";
 import Interface from "./uiComponents/Interface";
 import { Canvas } from "@react-three/fiber";
 import { Leva } from "leva";
-import { Perf } from "r3f-perf";
+// import { Perf } from "r3f-perf";
 import { Suspense } from "react";
 import { Html, useProgress } from "@react-three/drei";
 
@@ -13,7 +13,7 @@ function Loader() {
   return (
     <Html center>
       <div className="w-[500px] bg-black text-center text-amber-50 cursor-pointer text-6xl">
-        {percent === 100 ? null : `${percent} % LOADING`}
+        {percent === 100 ? null : `${percent} % 加载中`}
       </div>
     </Html>
   );
@@ -30,10 +30,10 @@ function App() {
       <Canvas style={{ background: "black" }} shadows>
         <Suspense fallback={<Loader />}>
           <Game />
-          <Perf position="top-left" />
+          {/* <Perf position="top-left" /> */}
         </Suspense>
       </Canvas>
-      <Leva collapsed />
+      <Leva collapsed hidden />
     </div>
   );
 }

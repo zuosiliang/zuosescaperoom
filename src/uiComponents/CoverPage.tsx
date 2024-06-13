@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { gsap } from "gsap";
+import { useGame } from "../store/useGame";
 
 const CoverPage = () => {
-  const [gameStarted, setGameStarted] = useState(false);
+  const { gameStarted, setGameStarted } = useGame();
   const handleClick = () => {
     setGameStarted(true);
     gsap.to(".banner", {

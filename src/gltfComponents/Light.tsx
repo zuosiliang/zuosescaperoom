@@ -14,8 +14,10 @@ function Light(props) {
         castShadow
         receiveShadow
         geometry={nodes.light.geometry}
-        material={materials.lamp_01}
-      />
+        // material={materials.lamp_01}
+      >
+        <meshBasicMaterial color={[2, 2, 2]} toneMapped={false} />
+      </mesh>
     </group>
   );
 }

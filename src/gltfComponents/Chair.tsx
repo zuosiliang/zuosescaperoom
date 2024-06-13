@@ -10,9 +10,9 @@ function Chair(props) {
   const pmremGenerator = new THREE.PMREMGenerator(gl);
 
   const { nodes, materials } = useGLTF("/chair-v3.glb");
-  materials.dcm_steel.envMapIntensity = 0.6;
-  materials.dcm_rubber.envMapIntensity = 0.3;
-  materials.dcm_wood.envMapIntensity = 0.3;
+  materials.dcm_steel.envMapIntensity = 0.1;
+  materials.dcm_rubber.envMapIntensity = 0.1;
+  materials.dcm_wood.envMapIntensity = 0.1;
 
   materials.dcm_steel.envMap = pmremGenerator.fromScene(environment).texture;
   materials.dcm_rubber.envMap = pmremGenerator.fromScene(environment).texture;

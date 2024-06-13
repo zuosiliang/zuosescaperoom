@@ -8,18 +8,18 @@ import { MODELS } from "../const";
 // 1.输入正确密码后，再点击门需展示打开门的动画
 // 2.通关后页面样式
 function Door(props) {
-  const { nodes, materials } = useGLTF("/door-v3.glb");
+  const { nodes, materials } = useGLTF("/door-v4.glb");
   const { gl } = useThree();
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
-  materials.Frame.envMapIntensity = 1;
+  materials.Frame.envMapIntensity = 0.1;
 
   materials.Frame.envMap = pmremGenerator.fromScene(environment).texture;
-  materials.Metal.envMapIntensity = 1;
+  materials.Metal.envMapIntensity = 0.1;
 
   materials.Metal.envMap = pmremGenerator.fromScene(environment).texture;
 
-  materials.Pano.envMapIntensity = 1;
+  materials.Pano.envMapIntensity = 0.1;
 
   materials.Pano.envMap = pmremGenerator.fromScene(environment).texture;
   return (
@@ -27,36 +27,33 @@ function Door(props) {
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.defaultMaterial.geometry}
+        geometry={nodes.frame.geometry}
         material={materials.Frame}
         rotation={[-Math.PI / 2, 0, 0]}
-        scale={0.001}
         userData={{ customName: MODELS.DOOR }}
       />
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.defaultMaterial008.geometry}
+        geometry={nodes.handle.geometry}
         material={materials.Metal}
         position={[-0.916, 0, 0.117]}
         rotation={[-Math.PI / 2, 0, -Math.PI]}
-        scale={0.001}
         userData={{ customName: MODELS.DOOR }}
       />
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.defaultMaterial003.geometry}
+        geometry={nodes.panel.geometry}
         material={materials.Pano}
         position={[-0.149, 0.98, 0.095]}
         rotation={[-Math.PI / 2, 0, 0]}
-        scale={0.001}
         userData={{ customName: MODELS.DOOR }}
       />
     </group>
   );
 }
 
-useGLTF.preload("/door-v3.glb");
+useGLTF.preload("/door-v4.glb");
 
 export default Door;

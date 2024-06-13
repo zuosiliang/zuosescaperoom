@@ -7,6 +7,9 @@ import {
   // FlyControls,
   PerspectiveCamera,
   useHelper,
+  BakeShadows,
+  Environment,
+  Text,
 } from "@react-three/drei";
 import { useRef, useMemo, useEffect } from "react";
 import {
@@ -14,6 +17,7 @@ import {
   Selection,
   Select,
   Outline,
+  Bloom,
 } from "@react-three/postprocessing";
 import { useThree, useFrame } from "@react-three/fiber";
 import {
@@ -25,6 +29,7 @@ import {
   BOOKSHELF_STATE,
   CABINET_STATE,
   TV_STATE,
+  DOOR_STATE,
 } from "./const";
 import * as THREE from "three";
 import { gsap } from "gsap";
@@ -44,6 +49,7 @@ import TvControl from "./gltfComponents/TvControl";
 import TipPaper from "./gltfComponents/TipPaper";
 // import Turnable from "./gltfComponents/Turnable";
 import Curtain from "./gltfComponents/Curtain";
+// import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 const noop = () => {};
 
@@ -51,16 +57,16 @@ export type HoverStates = Record<Model, boolean>;
 
 // TODO
 // 1. 修复聚焦时camera移动路径跳跃的问题
-// 2. 增加点光源，bloom effect，软阴影
-// 3. 性能优化
-// 4. 动态窗帘效果
-// 5. 开始游戏转场效果
-// 6. 在blender中把门的位置打个洞，让门正好嵌入洞中
-// 7. 增加一个镜子模型
+// 2. 性能优化
+// 3. 动态窗帘效果
+// 4. 增加一个镜子模型
 //
 // DONE
 // 1. 鼠标hover在地板上时展示圆圈
 // 2. 鼠标hover在模型上显示outline
+// 3. 开始游戏转场效果
+// 4. 在blender中把门的位置打个洞，让门正好嵌入洞中
+// 5. 增加点光源，bloom effect，软阴影
 
 function Game() {
   const defineCustomName = (obj, customName: Model) => {
@@ -97,6 +103,7 @@ function Game() {
     setCabinetState,
     setToolCallback,
     setTvState,
+    doorState,
   } = useGame();
 
   const pointerRef = useRef(new THREE.Vector2());
@@ -167,12 +174,12 @@ function Game() {
 
   const bookshelfScale = [bookShelfScaleX, bookShelfScaleY, bookShelfScaleZ];
 
-  // const { position: pointLightPosition } = useControls("pointlight", {
-  //   position: {
-  //     value: { x: -0.46, y: 1.62, z: 2.2 },
-  //     step: 0.01,
-  //   },
-  // });
+  const { position: pointLightPosition } = useControls("pointlight", {
+    position: {
+      value: { x: -0.46, y: 2.32, z: 2.24 },
+      step: 0.01,
+    },
+  });
 
   const {
     position: cabinetPosition,
@@ -334,16 +341,16 @@ function Game() {
     rotation: doorRotation,
   } = useControls(MODELS.DOOR, {
     position: {
-      value: { x: 2.4, y: 0.03, z: 1.59 },
+      value: { x: 2.476, y: 0.0, z: 1.59 },
       step: 0.01,
     },
     rotation: {
       value: { x: 0, y: -1.57, z: 0 },
       step: 0.01,
     },
-    scaleX: { value: 1, min: 0, max: 2 },
-    scaleY: { value: 1, min: 0, max: 2 },
-    scaleZ: { value: 1, min: 0, max: 2 },
+    scaleX: { value: 1.02, min: 0, max: 2 },
+    scaleY: { value: 1.02, min: 0, max: 2 },
+    scaleZ: { value: 1.02, min: 0, max: 2 },
   });
 
   const {
@@ -354,7 +361,7 @@ function Game() {
     rotation: lockRotation,
   } = useControls(MODELS.LOCK, {
     position: {
-      value: { x: 2.37, y: 1.42, z: 1.7 },
+      value: { x: 2.34, y: 1.42, z: 1.7 },
       step: 0.01,
     },
     rotation: {
@@ -497,7 +504,7 @@ function Game() {
     "room",
     {
       position: {
-        value: { x: -0.64, y: 0.2, z: 2.19 },
+        value: { x: -0.64, y: 0, z: 2.19 },
         step: 0.01,
       },
       rotation: {
@@ -616,14 +623,14 @@ function Game() {
     const clickPoint = event.intersections[0]?.point;
     if (clickPoint) {
       gsap.to(camera.position, {
-        duration: 0.8,
+        duration: 0.3,
         x: clickPoint.x,
         y: 1.7,
         z: clickPoint.z,
         onUpdate: function () {
           updateCameraOrbit();
         },
-        ease: "power1.in",
+        ease: "power3.in",
       });
     }
   };
@@ -682,6 +689,20 @@ function Game() {
         updateCameraOrbit();
       },
     });
+
+    // const newTarget = {
+    //   x: 1.6978127065931652,
+    //   y: 1.6993754374420418,
+    //   z: 1.67287552182789,
+    // };
+
+    // gsap.to(controls.target, {
+    //   duration: 1,
+    //   ...newTarget,
+    //   onUpdate: function () {
+    //     updateCameraOrbit();
+    //   },
+    // });
   };
 
   const handleClickBookshelf = (event) => {
@@ -714,6 +735,20 @@ function Game() {
     }
     showDialog("一把很牢固的椅子");
     lookAtModel(MODELS.CHAIR);
+  };
+
+  const handleClickBooks = (event) => {
+    event.stopPropagation();
+    setInEventModel(MODELS.BOOKS);
+    setIsModelClose(event.distance <= 2);
+    saveCurrentCameraState();
+    setRestoreFreePlayCallback(restoreFreePlay);
+    if (event.distance > 2) {
+      showDialog(TOO_FAR_TEXT);
+      return;
+    }
+    showDialog("侏罗纪公园？ 小孩书啊");
+    lookAtModel(MODELS.BOOKS);
   };
 
   const handleClickCouch = (event) => {
@@ -840,20 +875,6 @@ function Game() {
     lookAtModel(MODELS.LAMP);
   };
 
-  // const handleClickTurnable = (event) => {
-  //   event.stopPropagation();
-  //   setInEventModel(MODELS.TURNABLE);
-  //   setIsModelClose(event.distance <= 2);
-  //   saveCurrentCameraState();
-  //   setRestoreFreePlayCallback(restoreFreePlay);
-  //   if (event.distance > 2) {
-  //     showDialog(TOO_FAR_TEXT);
-  //     return;
-  //   }
-  //   showDialog("现在用黑胶唱片机的人真是不多了啊");
-  //   lookAtModel(MODELS.TURNABLE);
-  // };
-
   const handleClickPainting = (event) => {
     event.stopPropagation();
     setInEventModel(MODELS.PAINTING);
@@ -873,6 +894,7 @@ function Game() {
     setInEventModel(MODELS.LOCK);
     setIsModelClose(event.distance <= 2);
     saveCurrentCameraState();
+    setNextOperationCallback(noop);
     setRestoreFreePlayCallback(restoreFreePlay);
     if (event.distance > 2) {
       showDialog(TOO_FAR_TEXT);
@@ -994,7 +1016,7 @@ function Game() {
     }
   });
 
-  useHelper(pointLightRef, THREE.PointLightHelper, 0.1);
+  useHelper(pointLightRef, THREE.PointLightHelper, 0.01);
 
   // isClickRef是用来区分click和drag的，所以click和drag两种状态下isClick布尔值是互反的
   // mouseDownRef用来区分drag和mousemove,当鼠标按下时候触发mousemove，属于drag事件；当鼠标未按下时候触发mousemove，属于mousemove事件
@@ -1017,15 +1039,19 @@ function Game() {
     document.addEventListener("mouseup", () => {
       mouseDownRef.current = false;
     });
+
+    gsap.ticker.fps(60);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log("hoveredModel", hoveredModel);
   return (
     <>
       <PerspectiveCamera
         makeDefault
         manual
-        args={[60, window.innerWidth / window.innerHeight, 1, 1000]}
+        args={[50, window.innerWidth / window.innerHeight, 1, 1000]}
         ref={cameraRef}
         position={[cameraPosition.x, cameraPosition.y, cameraPosition.z]}
         near={0.01}
@@ -1048,27 +1074,29 @@ function Game() {
         rotateSpeed={-0.5}
         enableDamping={false}
       />
-      <ambientLight intensity={Math.PI} />
+      <ambientLight intensity={Math.PI / 20} />
 
-      {/* <pointLight
-        // castShadow
+      <pointLight
+        castShadow
         ref={pointLightRef}
         position={[
           pointLightPosition.x,
           pointLightPosition.y,
           pointLightPosition.z,
         ]}
-        intensity={5}
-        // shadow-mapSize-width={1024}
-        // shadow-mapSize-height={1024}
-        // shadow-camera-far={50}
-        // shadow-camera-left={-10}
-        // shadow-camera-right={10}
-        // shadow-camera-top={10}
-        // shadow-camera-bottom={-10}
-        // shadow-bias={-0.001}
-        // decay={0}
-      /> */}
+        intensity={2}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+        shadow-bias={-0.0001}
+        shadow-normalBias={0.003}
+        shadow-radius={4}
+        decay={0}
+      />
       <mesh ref={footprintRef} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[0.1, 0.01, 2, 74]} />
 
@@ -1077,10 +1105,8 @@ function Game() {
 
       <Selection>
         <EffectComposer autoClear={false}>
-          <Outline
-            edgeStrength={30} // the edge strength
-          />
-          {/* <Bloom mipmapBlur luminanceThreshold={1} levels={8} intensity={1} /> */}
+          <Outline edgeStrength={30} />
+          <Bloom mipmapBlur luminanceThreshold={1} levels={8} intensity={2} />
         </EffectComposer>
         <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.BOOKSHELF)}
@@ -1100,6 +1126,15 @@ function Game() {
             onClick={inEventModel ? noop : handleClickBookshelf}
           />
         </Select>
+        <Select enabled={[hoveredModel, inEventModel].includes(MODELS.BOOKS)}>
+          <Books
+            position={[bookPosition.x, bookPosition.y, bookPosition.z]}
+            rotation={[bookRotation.x, bookRotation.y, bookRotation.z]}
+            scale={bookScale}
+            onClick={inEventModel ? noop : handleClickBooks}
+          />
+        </Select>
+
         <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.COFFEE_TABLE)}
         >
@@ -1176,27 +1211,7 @@ function Game() {
             scale={lightScale}
           />
         </Select>
-        <Select
-          enabled={[hoveredModel, inEventModel].includes(MODELS.TV_CABINET)}
-        >
-          <primitive
-            castShadow
-            receiveShadow
-            position={[
-              tvCabinetPosition.x,
-              tvCabinetPosition.y,
-              tvCabinetPosition.z,
-            ]}
-            rotation={[
-              tvCabinetRotation.x,
-              tvCabinetRotation.y,
-              tvCabinetRotation.z,
-            ]}
-            object={tvCabinet.scene}
-            scale={tvCabinetScale}
-            onClick={inEventModel ? noop : handleClickDoor}
-          />
-        </Select>
+
         <Select
           enabled={[hoveredModel, inEventModel].includes(MODELS.BEAN_BAG)}
         >
@@ -1210,26 +1225,7 @@ function Game() {
             onClick={inEventModel ? noop : handleClickBeanbag}
           />
         </Select>
-        {/* <Select
-          enabled={[hoveredModel, inEventModel].includes(MODELS.TURNABLE)}
-        >
-          <Turnable
-            castShadow
-            receiveShadow
-            position={[
-              turnablePosition.x,
-              turnablePosition.y,
-              turnablePosition.z,
-            ]}
-            rotation={[
-              turnableRotation.x,
-              turnableRotation.y,
-              turnableRotation.z,
-            ]}
-            scale={turnableScale}
-            onClick={inEventModel ? noop : handleClickTurnable}
-          />
-        </Select> */}
+
         <Select enabled={[hoveredModel, inEventModel].includes(MODELS.LAMP)}>
           <Lamp
             position={[lampPosition.x, lampPosition.y, lampPosition.z]}
@@ -1238,13 +1234,7 @@ function Game() {
             onClick={inEventModel ? noop : handleClickLamp}
           />
         </Select>
-        <Select enabled={[hoveredModel, inEventModel].includes(MODELS.BOOKS)}>
-          <Books
-            position={[bookPosition.x, bookPosition.y, bookPosition.z]}
-            rotation={[bookRotation.x, bookRotation.y, bookRotation.z]}
-            scale={bookScale}
-          />
-        </Select>
+
         <Select enabled={[hoveredModel, inEventModel].includes(MODELS.DISH)}>
           <primitive
             castShadow
@@ -1253,7 +1243,6 @@ function Game() {
             rotation={[dishRotation.x, dishRotation.y, dishRotation.z]}
             object={dish.scene}
             scale={dishScale}
-            // onClick={inEventModel ? noop : handleClickDoor}
           />
         </Select>
         <Select
@@ -1308,7 +1297,32 @@ function Game() {
         position={[curtainPosition.x, curtainPosition.y, curtainPosition.z]}
         rotation={[curtainRotation.x, curtainRotation.y, curtainRotation.z]}
         scale={curtainScale}
-        // onClick={inEventModel ? noop : handleClickDoor}
+      />
+
+      <Text
+        color="white"
+        position={[0, 1.42, 1.7]}
+        fontSize={0.5}
+        // rotation={[lockRotation.x, lockRotation.y, lockRotation.z]}
+        visible={doorState === DOOR_STATE.UNLOCKED}
+      >
+        你已经成功解密！
+      </Text>
+      <primitive
+        castShadow
+        receiveShadow
+        position={[
+          tvCabinetPosition.x,
+          tvCabinetPosition.y,
+          tvCabinetPosition.z,
+        ]}
+        rotation={[
+          tvCabinetRotation.x,
+          tvCabinetRotation.y,
+          tvCabinetRotation.z,
+        ]}
+        object={tvCabinet.scene}
+        scale={tvCabinetScale}
       />
 
       {tools.includes(MODELS.TIP_PAPER) ? null : (
@@ -1332,7 +1346,14 @@ function Game() {
         />
       )}
 
-      {/* <BakeShadows /> */}
+      <BakeShadows />
+
+      <Environment
+        background={"only"}
+        backgroundIntensity={0.01}
+        backgroundRotation={[0, Math.PI / 2, 0]}
+        files="./moonless_golf_1k.hdr"
+      />
     </>
   );
 }

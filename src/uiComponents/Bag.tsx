@@ -6,7 +6,7 @@ const Bag = () => {
 
   return (
     <div
-      className="fixed bottom-[36px] right-[36px] cursor-pointer"
+      className="fixed bottom-[36px] right-[36px] cursor-pointer z-20"
       onClick={openBag}
     >
       <ToolsIcon className="text-white w-[36px] h-[36px]" />

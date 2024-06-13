@@ -4,17 +4,46 @@ import { CORRECT_PASSWORD, LOCK_STATE, MODELS, DOOR_STATE } from "../const";
 import { useGame } from "../store/useGame";
 
 // TODO
+// 1.鼠标点击时应该有音效 optional
+// 2.按#号后应该根据密码是否正确显示绿光红光 optional
+//
+// DONE
 // 1.按钮点击后应该要有位移动画
 // 2.鼠标hover在按钮上时应该有手势光标
-// 3.鼠标点击时应该有音效 optional
-// 4.按#号后应该根据密码是否正确显示绿光红光 optional
-// 5.模型旁边显示提示文案，提示按#号结束
+// 3. 模型旁边显示提示文案，提示按#号结束
+
 function Lock(props) {
   const { nodes, materials } = useGLTF("/lock.glb");
   const { setLockState, showDialog, inEventModel, setDoorState } = useGame();
   const [password, setPassword] = useState([]);
 
-  const numRef = useRef(null);
+  const ref0 = useRef(null);
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  const ref3 = useRef(null);
+  const ref4 = useRef(null);
+  const ref5 = useRef(null);
+  const ref6 = useRef(null);
+  const ref7 = useRef(null);
+  const ref8 = useRef(null);
+  const ref9 = useRef(null);
+  const refHash = useRef(null);
+  const refAsterisk = useRef(null);
+
+  const charRefMap = {
+    "0": ref0,
+    "1": ref1,
+    "2": ref2,
+    "3": ref3,
+    "4": ref4,
+    "5": ref5,
+    "6": ref6,
+    "7": ref7,
+    "8": ref8,
+    "9": ref9,
+    "#": refHash,
+    "*": refAsterisk,
+  };
 
   const handleClickHash = () => {
     if (password.toString() === CORRECT_PASSWORD.toString()) {
@@ -23,11 +52,19 @@ function Lock(props) {
       setDoorState(DOOR_STATE.UNLOCKED);
       return;
     }
-
     showDialog("密码不对啊");
+    setPassword([]);
   };
 
   const createHandleClick = (char) => () => {
+    const clickAnimation = (char) => {
+      charRefMap[char].current.translateY(0.2);
+      setTimeout(() => {
+        charRefMap[char].current.translateY(-0.2);
+      }, 50);
+    };
+
+    clickAnimation(char);
     if (inEventModel === MODELS.LOCK) {
       setPassword((oldPassword) => [...oldPassword, char]);
     }
@@ -50,6 +87,7 @@ function Lock(props) {
       <group scale={0.025}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <mesh
+            ref={refHash}
             castShadow
             receiveShadow
             geometry={nodes["#"].geometry}
@@ -58,6 +96,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={refAsterisk}
             castShadow
             receiveShadow
             geometry={nodes["*"].geometry}
@@ -66,7 +105,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
-            ref={numRef}
+            ref={ref0}
             castShadow
             receiveShadow
             geometry={nodes["0"].geometry}
@@ -75,6 +114,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref1}
             castShadow
             receiveShadow
             geometry={nodes["1"].geometry}
@@ -83,6 +123,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref2}
             castShadow
             receiveShadow
             geometry={nodes["2"].geometry}
@@ -91,6 +132,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref3}
             castShadow
             receiveShadow
             geometry={nodes["3"].geometry}
@@ -99,6 +141,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref4}
             castShadow
             receiveShadow
             geometry={nodes["4"].geometry}
@@ -107,6 +150,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref5}
             castShadow
             receiveShadow
             geometry={nodes["5"].geometry}
@@ -115,6 +159,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref6}
             castShadow
             receiveShadow
             geometry={nodes["6"].geometry}
@@ -123,6 +168,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref7}
             castShadow
             receiveShadow
             geometry={nodes["7"].geometry}
@@ -131,6 +177,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref8}
             castShadow
             receiveShadow
             geometry={nodes["8"].geometry}
@@ -139,6 +186,7 @@ function Lock(props) {
             userData={{ customName: MODELS.LOCK }}
           />
           <mesh
+            ref={ref9}
             castShadow
             receiveShadow
             geometry={nodes["9"].geometry}

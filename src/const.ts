@@ -129,7 +129,7 @@ export const LOCK_STATE = {
 
 export const LOCK_TEXT_MAP = {
   UNLOCKED: "已经解锁了",
-  LOCKED: "输入密码试试",
+  LOCKED: "输入密码试试，#号结束",
 };
 
 export type DoorState = LockState;

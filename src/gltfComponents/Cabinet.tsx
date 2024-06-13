@@ -16,7 +16,7 @@ function Cabinet({ onClickPuzzlePaper, ...props }) {
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
 
-  materials.Drawer.envMapIntensity = 0.2;
+  materials.Drawer.envMapIntensity = 0.1;
   materials.Drawer.envMap = pmremGenerator.fromScene(environment).texture;
 
   return (

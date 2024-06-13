@@ -7,7 +7,7 @@ import CoverPage from "./CoverPage";
 // DONE
 // 找个好看点的道具图标
 const Interface = () => {
-  const { text, isBagOpened } = useGame();
+  const { text, isBagOpened, gameStarted } = useGame();
   const isDialogOpened = !!text;
 
   return (
@@ -23,7 +23,7 @@ const Interface = () => {
           <BagSelect />
         </div>
       ) : null}
-      {!isBagOpened && !isDialogOpened ? <ControlBar /> : null}
+      {!isBagOpened && !isDialogOpened && gameStarted ? <ControlBar /> : null}
     </>
   );
 };

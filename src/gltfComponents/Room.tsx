@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { MODELS } from "../const";
 
 function Room({ onClickFloor, ...props }) {
-  const { nodes, materials } = useGLTF("/room-v1.glb");
+  const { nodes } = useGLTF("/room-v4.glb");
 
   const [floorColorMap, floorNormalMap, floorRoughMap] = useLoader(
     THREE.TextureLoader,
@@ -27,60 +27,35 @@ function Room({ onClickFloor, ...props }) {
   floorRoughMap.wrapT = THREE.RepeatWrapping;
   floorRoughMap.repeat.set(12, 12); // Adjust the scale here
 
-  const [wallBaseColorMap, wallNormalMap, wallRoughnessMap] = useLoader(
-    THREE.TextureLoader,
-    [
-      "./beige_wall_001_diff_1k.jpg",
-      "./beige_wall_001_nor_gl_1k.jpg",
-      "./beige_wall_001_rough_1k.jpg",
-    ],
-  );
+  const [wallBaseColorMap] = useLoader(THREE.TextureLoader, [
+    "./beige_wall_001_diff_1k.jpg",
+  ]);
 
   wallBaseColorMap.wrapS = THREE.RepeatWrapping;
   wallBaseColorMap.wrapT = THREE.RepeatWrapping;
-  wallBaseColorMap.repeat.set(20, 20); // Adjust the scale here
-  wallBaseColorMap.colorSpace = THREE.SRGBColorSpace;
-
-  wallNormalMap.wrapS = THREE.RepeatWrapping;
-  wallNormalMap.wrapT = THREE.RepeatWrapping;
-  wallNormalMap.repeat.set(20, 20); // Adjust the scale here
-
-  wallRoughnessMap.wrapS = THREE.RepeatWrapping;
-  wallRoughnessMap.wrapT = THREE.RepeatWrapping;
-  wallRoughnessMap.repeat.set(20, 20); // Adjust the scale here
+  wallBaseColorMap.repeat.set(8, 8);
 
   return (
     <group {...props} dispose={null}>
       <mesh
-        // castShadow
+        castShadow
         receiveShadow
-        geometry={nodes.Cube.geometry}
-        material={materials.Material}
-        position={[0, 1, 0]}
+        geometry={nodes.wall.geometry}
+        position={[-0.001, 1.2, -0.004]}
         userData={{ customName: MODELS.WALL }}
       >
-        <meshStandardMaterial
-          side={THREE.BackSide}
-          // color="pink"
-          map={wallBaseColorMap}
-          normalMap={wallNormalMap}
-          //   displacementMap={wallDisplacementMap}
-          //   metalnessMap={wallMetalnessMap}
-          roughnessMap={wallRoughnessMap}
-        />
+        <meshLambertMaterial side={THREE.FrontSide} map={wallBaseColorMap} />
       </mesh>
       <mesh
-        // castShadow
+        castShadow
         receiveShadow
-        geometry={nodes.ground.geometry}
-        material={materials.Material}
-        position={[0, 1, 0]}
-        onClick={onClickFloor}
+        geometry={nodes.floor.geometry}
+        position={[-0.001, 1.2, -0.004]}
         userData={{ customName: MODELS.FLOOR }}
+        onClick={onClickFloor}
       >
         <meshStandardMaterial
-          side={THREE.BackSide}
-          // color="white"
+          side={THREE.FrontSide}
           map={floorColorMap}
           normalMap={floorNormalMap}
           roughnessMap={floorRoughMap}
@@ -90,6 +65,6 @@ function Room({ onClickFloor, ...props }) {
   );
 }
 
-useGLTF.preload("/room-v1.glb");
+useGLTF.preload("/room-v4.glb");
 
 export default Room;

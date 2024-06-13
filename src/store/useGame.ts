@@ -72,4 +72,6 @@ export const useGame = create((set) => ({
     set({ nextOperationCallback: newNextOperationCallback }),
   toolCallback: null,
   setToolCallback: (newToolCallback) => set({ toolCallback: newToolCallback }),
+  gameStarted: false,
+  setGameStarted: (newGameStarted) => set({ gameStarted: newGameStarted }),
 }));

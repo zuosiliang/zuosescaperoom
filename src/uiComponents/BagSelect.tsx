@@ -27,15 +27,18 @@ const BagSelect = () => {
   const handleCloseBag = () => {
     setSelectedTool(null);
     closeBag();
+    if (inEventModel) {
+      restoreFreePlayCallback();
+    }
   };
 
   const handleUseTool = () => {
-    if (selectedTool === MODEL_TOOL_MAP[inEventModel]) {
-      updateTools(tools.filter((tool) => tool !== selectedTool));
-      closeBag();
-      toolCallback();
-      restoreFreePlayCallback();
-    }
+    // if (selectedTool === MODEL_TOOL_MAP[inEventModel]) {
+    updateTools(tools.filter((tool) => tool !== selectedTool));
+    closeBag();
+    toolCallback();
+    restoreFreePlayCallback();
+    // }
   };
 
   return (
@@ -44,7 +47,7 @@ const BagSelect = () => {
       // style={{ background: "rgba(255, 255, 255, 0.3)" }}
     >
       <div className="flex flex-col justify-between">
-        <div className="pt-[24px] pl-[24px] font-bold text-7xl">TOOLS</div>
+        <div className="pt-[24px] pl-[24px] font-bold text-7xl">道具</div>
 
         <div className="flex flex-col grow items-center ml-[24px]">
           <div className="flex w-[400px] grow flex-col items-center pt-[20px] font-bold">
@@ -67,7 +70,7 @@ const BagSelect = () => {
           </div>
           <div className="flex justify-around w-full">
             <BagButton onClick={handleCloseBag} text="返回" />
-            {inEventModel ? (
+            {inEventModel && selectedTool === MODEL_TOOL_MAP[inEventModel] ? (
               <BagButton onClick={handleUseTool} text="使用" />
             ) : null}
           </div>

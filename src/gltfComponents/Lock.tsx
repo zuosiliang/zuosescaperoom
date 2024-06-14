@@ -5,12 +5,12 @@ import { useGame } from "../store/useGame";
 
 // TODO
 // 1.鼠标点击时应该有音效 optional
-// 2.输入#号时，按钮未显示动画
 //
 // DONE
 // 1.按钮点击后应该要有位移动画
 // 2.鼠标hover在按钮上时应该有手势光标
 // 3. 模型旁边显示提示文案，提示按#号结束
+// 4.输入#号时，按钮未显示动画
 
 function Lock(props) {
   const { nodes, materials } = useGLTF("/lock.glb");
@@ -45,17 +45,6 @@ function Lock(props) {
     "*": refAsterisk,
   };
 
-  const handleClickHash = () => {
-    if (password.toString() === CORRECT_PASSWORD.toString()) {
-      setLockState(LOCK_STATE.UNLOCKED);
-      showDialog();
-      setDoorState(DOOR_STATE.UNLOCKED);
-      return;
-    }
-    showDialog("密码不对啊");
-    setPassword([]);
-  };
-
   const createHandleClick = (char) => () => {
     const clickAnimation = (char) => {
       charRefMap[char].current.translateY(0.2);
@@ -64,8 +53,8 @@ function Lock(props) {
       }, 50);
     };
 
-    clickAnimation(char);
     if (inEventModel === MODELS.LOCK) {
+      clickAnimation(char);
       setPassword((oldPassword) => [...oldPassword, char]);
     }
   };
@@ -81,6 +70,19 @@ function Lock(props) {
   const handleClickEight = createHandleClick(8);
   const handleClickNine = createHandleClick(9);
   const handleClickStar = createHandleClick("*");
+
+  const handleClickHash = () => {
+    createHandleClick("#")();
+
+    if (password.toString() === CORRECT_PASSWORD.toString()) {
+      setLockState(LOCK_STATE.UNLOCKED);
+      showDialog();
+      setDoorState(DOOR_STATE.UNLOCKED);
+      return;
+    }
+    showDialog("密码不对啊");
+    setPassword([]);
+  };
 
   return (
     <group {...props} dispose={null}>

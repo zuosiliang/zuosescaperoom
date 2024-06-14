@@ -137,7 +137,7 @@ export type DoorState = LockState;
 export const DOOR_STATE = LOCK_STATE;
 
 export const DOOR_TEXT_MAP = {
-  UNLOCKED: "已经解锁了",
+  UNLOCKED: "门打开了！逃脱成功！",
   LOCKED: "门打不开，应该是通过旁边的密码锁打开的",
 };
 

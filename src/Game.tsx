@@ -29,7 +29,7 @@ import {
   BOOKSHELF_STATE,
   CABINET_STATE,
   TV_STATE,
-  // DOOR_STATE,
+  DOOR_STATE,
 } from "./const";
 import * as THREE from "three";
 import { gsap } from "gsap";
@@ -106,9 +106,10 @@ function Game() {
     setCabinetState,
     setToolCallback,
     setTvState,
-    // doorState,
+    doorState,
   } = useGame();
 
+  const animationRef = useRef(null);
   const pointerRef = useRef(new THREE.Vector2());
   const pointLightRef = useRef(null);
   const raycaster = new THREE.Raycaster();
@@ -780,6 +781,7 @@ function Game() {
   };
 
   const handleClickDoor = (event) => {
+    // console.log("animationRef.current", animationRef.current);
     event.stopPropagation();
     setInEventModel(MODELS.DOOR);
     setIsModelClose(event.distance <= 2);
@@ -790,9 +792,12 @@ function Game() {
       showDialog(TOO_FAR_TEXT);
       return;
     }
-    showDialog();
 
     lookAtModel(MODELS.DOOR);
+    if (doorState === DOOR_STATE.UNLOCKED) {
+      animationRef.current.play();
+    }
+    showDialog();
   };
 
   const handleClickTv = (event) => {
@@ -1171,6 +1176,7 @@ function Game() {
             rotation={[doorRotation.x, doorRotation.y, doorRotation.z]}
             scale={doorScale}
             onClick={inEventModel ? noop : handleClickDoor}
+            animationRef={animationRef}
           />
         </Select>
         <Select enabled={[hoveredModel, inEventModel].includes(MODELS.LOCK)}>

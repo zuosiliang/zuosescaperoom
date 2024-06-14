@@ -9,7 +9,7 @@ import {
   useHelper,
   BakeShadows,
   Environment,
-  Text,
+  // Text,
 } from "@react-three/drei";
 import { useRef, useMemo, useEffect } from "react";
 import {
@@ -29,7 +29,7 @@ import {
   BOOKSHELF_STATE,
   CABINET_STATE,
   TV_STATE,
-  DOOR_STATE,
+  // DOOR_STATE,
 } from "./const";
 import * as THREE from "three";
 import { gsap } from "gsap";
@@ -60,8 +60,6 @@ export type HoverStates = Record<Model, boolean>;
 // 2. 性能优化
 // 3. 动态窗帘效果
 // 4. 增加一个镜子模型
-// 5. hover在模型上有时cursor pointer 和outline会不出现
-// 6. hover在地板上有时光圈不出现
 
 //
 // DONE
@@ -70,6 +68,8 @@ export type HoverStates = Record<Model, boolean>;
 // 3. 开始游戏转场效果
 // 4. 在blender中把门的位置打个洞，让门正好嵌入洞中
 // 5. 增加点光源，bloom effect，软阴影
+// 6. hover在模型上有时cursor pointer 和outline会不出现
+// 7. hover在地板上有时光圈不出现
 
 function Game() {
   const defineCustomName = (obj, customName: Model) => {
@@ -106,7 +106,7 @@ function Game() {
     setCabinetState,
     setToolCallback,
     setTvState,
-    doorState,
+    // doorState,
   } = useGame();
 
   const pointerRef = useRef(new THREE.Vector2());
@@ -978,6 +978,8 @@ function Game() {
       const intersectPoint = intersects[0].point;
       /** 鼠标在地板上 */
       if (newhoveredModel === MODELS.FLOOR) {
+        // console.log("鼠标在地板上  ");
+
         if (hoveredModel !== MODELS.FLOOR) {
           setHoveredModel(MODELS.FLOOR);
         }
@@ -992,14 +994,19 @@ function Game() {
       }
       /** 鼠标还在同个模型上 */
       if (newhoveredModel === hoveredModel) {
+        // console.log("鼠标还在同个模型上 ");
+
         return;
       }
       /**鼠标在非地板的模型上 */
       if (newhoveredModel !== MODELS.FLOOR) {
+        // console.log("鼠标在非地板的模型上 ", newhoveredModel);
+        // console.log("intersects[0]", intersects[0]);
         setHoveredModel(newhoveredModel);
         footprintRef.current.visible = false;
       }
     } else {
+      // console.log("鼠标不在模型上");
       setHoveredModel(null);
     }
   }
@@ -1048,7 +1055,6 @@ function Game() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log("hoveredModel", hoveredModel);
   return (
     <>
       <PerspectiveCamera
@@ -1301,7 +1307,7 @@ function Game() {
         rotation={[curtainRotation.x, curtainRotation.y, curtainRotation.z]}
         scale={curtainScale}
       />
-
+      {/* 
       <Text
         color="white"
         position={[0, 1.42, 1.7]}
@@ -1310,7 +1316,7 @@ function Game() {
         visible={doorState === DOOR_STATE.UNLOCKED}
       >
         你已经成功解密！
-      </Text>
+      </Text> */}
       <primitive
         castShadow
         receiveShadow

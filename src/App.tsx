@@ -12,8 +12,10 @@ function Loader() {
 
   return (
     <Html center>
-      <div className="w-[500px] bg-black text-center text-amber-50 cursor-pointer text-6xl">
-        {percent === 100 ? null : `${percent} % 加载中`}
+      <div className="w-[800px] h-[600px] bg-black justify-center content-center">
+        <div className="text-amber-50 cursor-pointer text-6xl text-center">
+          {percent === 100 ? null : `${percent} % 加载中`}
+        </div>
       </div>
     </Html>
   );

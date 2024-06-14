@@ -56,10 +56,9 @@ const noop = () => {};
 export type HoverStates = Record<Model, boolean>;
 
 // TODO
-// 1. 修复聚焦时camera移动路径跳跃的问题
-// 2. 性能优化
-// 3. 动态窗帘效果
-// 4. 增加一个镜子模型
+// 1. 性能优化
+// 2. 动态窗帘效果
+// 3. 增加一个镜子模型
 
 //
 // DONE
@@ -70,6 +69,7 @@ export type HoverStates = Record<Model, boolean>;
 // 5. 增加点光源，bloom effect，软阴影
 // 6. hover在模型上有时cursor pointer 和outline会不出现
 // 7. hover在地板上有时光圈不出现
+// 8. 修复聚焦时camera移动路径跳跃的问题
 
 function Game() {
   const defineCustomName = (obj, customName: Model) => {
@@ -155,6 +155,10 @@ function Game() {
   const isAnyModelThanRoomHoveredRef = useRef(null);
   isAnyModelThanRoomHoveredRef.current = isAnyModelThanRoomHovered;
   const cameraRef = useRef(null);
+  const { get } = useThree();
+
+  const controls = get().controls;
+
   const {
     position: bookshelfPosition,
     scaleX: bookShelfScaleX,
@@ -616,8 +620,6 @@ function Game() {
   };
   const { camera, scene } = useThree();
 
-  const { get } = useThree();
-
   const handleClickFloor = (event) => {
     if (isAnyModelThanRoomHovered || !isClickRef.current) {
       return;
@@ -639,32 +641,26 @@ function Game() {
   };
 
   const saveCurrentCameraState = () => {
-    const quaternion = new THREE.Quaternion();
+    // const quaternion = new THREE.Quaternion();
     const currentPosition = new THREE.Vector3();
     camera.getWorldPosition(currentPosition);
-    camera.getWorldQuaternion(quaternion);
-    cameraStateRef.current = { quaternion, currentPosition };
+    // camera.getWorldQuaternion(quaternion);
+    cameraStateRef.current = {
+      target: { ...controls.target },
+      currentPosition,
+    };
   };
 
   const restorePreviousCameraState = () => {
-    const { quaternion, currentPosition } = cameraStateRef.current;
+    const { currentPosition } = cameraStateRef.current;
+
     gsap.to(camera.position, {
       duration: 0.5,
       x: currentPosition.x,
       y: currentPosition.y,
       z: currentPosition.z,
-      onUpdate: function () {
-        updateCameraOrbit();
-      },
-    });
 
-    gsap.to(camera.quaternion, {
-      duration: 0.5,
-      x: quaternion.x,
-      y: quaternion.y,
-      z: quaternion.z,
-      w: quaternion.w,
-      onUpdate: function () {
+      onComplete: function () {
         updateCameraOrbit();
       },
     });
@@ -676,36 +672,16 @@ function Game() {
   };
 
   const lookAtModel = (model: Model) => {
-    const { position, quaternion } = MODEL_CAMERA_MAP[model];
+    const { position, target } = MODEL_CAMERA_MAP[model];
+
     gsap.to(camera.position, {
       duration: 0.5,
       ...position,
       onUpdate: function () {
-        updateCameraOrbit();
+        controls?.target.copy(target);
+        controls.update();
       },
     });
-
-    gsap.to(camera.quaternion, {
-      duration: 0.5,
-      ...quaternion,
-      onUpdate: function () {
-        updateCameraOrbit();
-      },
-    });
-
-    // const newTarget = {
-    //   x: 1.6978127065931652,
-    //   y: 1.6993754374420418,
-    //   z: 1.67287552182789,
-    // };
-
-    // gsap.to(controls.target, {
-    //   duration: 1,
-    //   ...newTarget,
-    //   onUpdate: function () {
-    //     updateCameraOrbit();
-    //   },
-    // });
   };
 
   const handleClickBookshelf = (event) => {

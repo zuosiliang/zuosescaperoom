@@ -15,7 +15,6 @@ function Door({ animationRef, ...props }) {
   const { nodes, materials, animations } = useGLTF("/door-v5.glb");
   const { actions } = useAnimations(animations, group);
 
-  console.log("actions", actions);
   const environment = new RoomEnvironment(gl);
   const pmremGenerator = new THREE.PMREMGenerator(gl);
   materials.Frame.envMapIntensity = 0.1;
